@@ -7,6 +7,7 @@ nlohmann::json EyeOfRhianneConfiguration::toJson() const {
   result["AssetPath"]    = AssetPath   ;
   result["ShowFPS"]      = ShowFPS     ;
   result["SupComPath"]   = SupComPath  ;
+  result["UseSCD"]       = UseSCD      ;
   return result;
 }
 
@@ -16,6 +17,7 @@ void EyeOfRhianneConfiguration::fromJson(nlohmann::json from) {
   AssetPath    = from["AssetPath"];
   ShowFPS      = from["ShowFPS"];
   SupComPath   = from["SupComPath"];
+  UseSCD       = from["UseSCD"]  ;
 }
 
 Vishala::BinaryPackage EyeOfRhianneConfiguration::toBinary()const {
@@ -25,6 +27,7 @@ Vishala::BinaryPackage EyeOfRhianneConfiguration::toBinary()const {
   Vishala::BinaryPackage::val2bin<bool       >(result, ShowFPS     );
   Vishala::BinaryPackage::val2bin<std::string>(result, AssetPath   );
   Vishala::BinaryPackage::val2bin<std::string>(result, SupComPath  );
+  Vishala::BinaryPackage::val2bin<bool       >(result, UseSCD      );
   return result;
 }
 
@@ -34,4 +37,5 @@ void EyeOfRhianneConfiguration::fromBinary(Vishala::BinaryPackage& data) {
   ShowFPS      = Vishala::BinaryPackage::bin2val<bool       >(data);
   AssetPath    = Vishala::BinaryPackage::bin2val<std::string>(data);
   SupComPath   = Vishala::BinaryPackage::bin2val<std::string>(data);
+  UseSCD       = Vishala::BinaryPackage::bin2val<bool       >(data);
 }

@@ -4,6 +4,7 @@ project(EyeOfRhianne)
 add_subdirectory(Yathsou)
 
 find_package(glm REQUIRED)
+find_package(imgui REQUIRED)
 
 ############################################################################
 ############################################################################
@@ -64,6 +65,7 @@ AezeselFileIOLib
 VishalaNetworkLib
 AthanahCommonLib
 glm::glm
+imgui::imgui
 )
 
 target_include_directories(EyeOfRhianne PRIVATE 
@@ -98,3 +100,5 @@ add_custom_command(TARGET EyeOfRhianne POST_BUILD
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                "${AhwassaGraphicsLib_SOURCE_DIR}/Data/Fonts/arial.ttf"              
                 $<TARGET_FILE_DIR:EyeOfRhianne>/Data/Fonts/arial.ttf)
+
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT EyeOfRhianne)

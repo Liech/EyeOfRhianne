@@ -28,6 +28,9 @@
 
 #include "AezeselFileIOLib/SupremeCommander/SCMAP.h"
 
+#include <imgui.h>
+#include "AhwassaGraphicsLib/Input/IMGUIRenderer.h"
+
 void enforceWorkingDir(std::string exeDir) {
   const size_t last_slash_idx = exeDir.find_last_of("\\/");
   if (std::string::npos != last_slash_idx)
@@ -41,46 +44,37 @@ int main(int argc, char** argv) {
   enforceWorkingDir(std::string(argv[0]));
 
   EyeOfRhianneConfiguration config;
-  config.fromJsonFile("Configuration.json");
+  try
+  {
+      config.fromJsonFile("Configuration.json");
+  }
+  catch (...)
+  {
+      config = EyeOfRhianneConfiguration();
+      config.toJsonFile("Configuration.json");
+  }
 
   int width  = config.ScreenWidth;
   int height = config.ScreenHeight;
 
   Ahwassa::Window w(width, height);
-  std::unique_ptr<Ahwassa::FPS       > fps;
+  std::unique_ptr<Ahwassa::FPS> fps;
   
-  std::unique_ptr<AssetSelection>    assets   ;
-  std::unique_ptr<Ahwassa::Button>   assetButton;
-  std::unique_ptr<GraphicOptions>    graphicUI;
-  std::unique_ptr<Graphic>           graphic;
+  std::unique_ptr<AssetSelection>         assets   ;
+  std::unique_ptr<GraphicOptions>         graphicUI;
+  std::unique_ptr<Graphic>                graphic;
+  std::unique_ptr<Ahwassa::IMGUIRenderer> ui;
 
   std::shared_ptr<Ahwassa::FreeCamera> freeCam;
   w.Startup = [&]() {
-    
     freeCam = std::make_shared<Ahwassa::FreeCamera>(w.camera(), w.input(), Iyathuum::Key::MOUSE_BUTTON_1);
     w.camera()->setPosition(glm::vec3(20, 20, 20));
-    w.input().addUIElement(freeCam.get(), 1);
+    //w.input().addUIElement(freeCam.get(), 1);
 
-    std::function<void()> disableAll = [&]() { 
-      assets->setVisible(false);
-      graphicUI->setVisible(false);
-    };
-
-    graphic = std::make_unique<Graphic>(&w);
-
-    Iyathuum::glmAABB<2> assetArea      (glm::vec2(0, 0 ), glm::vec2(300, w.getHeight() - 50));
-    Iyathuum::glmAABB<2> assetButtonArea(glm::vec2(0, w.getHeight() - 50), glm::vec2(300, 50));
-    assets = std::make_unique<AssetSelection>(config,assetArea, *graphic);
-    assetButton = std::make_unique<Ahwassa::Button>("Assets", assetButtonArea, [disableAll,&assets]() {
-      bool vis = assets->isVisible();
-      disableAll();
-      assets->setVisible(!vis); 
-    }, &w);
-
-    graphicUI = std::make_unique<GraphicOptions>(disableAll,*graphic);
-
-    fps = std::make_unique<Ahwassa::FPS>(&w);
-
+    graphic = std::make_unique<Graphic               >(&w);
+    assets  = std::make_unique<AssetSelection        >(config, *graphic);
+    fps     = std::make_unique<Ahwassa::FPS          >(&w);
+    ui      = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
   };
 
   w.Update = [&]() {
@@ -88,12 +82,15 @@ int main(int argc, char** argv) {
 
     graphic->draw();
 
-    assetButton->draw();
-    assets->draw();
-    graphicUI->drawUI();
+    ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = 2;
+    ui->start();
+    assets->menu();
+    //ImGui::ShowDemoWindow();
+    ui->end();
 
     if (config.ShowFPS) 
-     fps->draw();
+     fps->draw();    
   };
   w.run();
 

@@ -10,6 +10,7 @@ public:
   int         ScreenHeight = 600;
   std::string AssetPath    = "Data";
   bool        ShowFPS      = true;
+  bool        UseSCD       = true;
   std::string SupComPath   = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Supreme Commander Forged Alliance";
 
   virtual nlohmann::json         toJson()         const              override;

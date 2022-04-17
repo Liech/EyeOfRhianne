@@ -7,11 +7,6 @@
 #include "HaasScriptingLib/ScriptEngine.h"
 
 #include "AhwassaGraphicsLib/Core/Window.h"
-#include "AhwassaGraphicsLib/Core/Renderer.h"
-#include "AhwassaGraphicsLib/Widgets/Button.h"
-#include "AhwassaGraphicsLib/Renderer/BasicTextRenderer.h"
-#include "AhwassaGraphicsLib/Renderer/BasicRectangleRenderer.h"
-#include "AhwassaGraphicsLib/Renderer/BasicTexture2DRenderer.h"
 
 #include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
 #include "AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h"
@@ -21,45 +16,16 @@
 #include "AthanahCommonLib/SupCom/Blueprint/Blueprint.h"
 #include "AthanahCommonLib/SupCom/Blueprint/BlueprintGeneral.h"
 #include "AthanahCommonLib/SupCom/Blueprint/BlueprintDisplay.h"
+#include "AhwassaGraphicsLib/Uniforms/Texture.h"
 
-UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, Iyathuum::glmAABB<2> area, std::function<void()> disableAllCall, Graphic& graphic) : 
+#include <imgui.h>
+
+UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, std::function<void()> disableAllCall, Graphic& graphic) : 
   _graphic(graphic),
   _gamedata(gamedata)
 {
-  _disableAllCall = disableAllCall;
-
-  Iyathuum::glmAABB<2> categoriesArea(area.getPosition()                  , glm::vec2(50                  , area.getSize()[1]));
-  Iyathuum::glmAABB<2> modelArea     (area.getPosition() + glm::vec2(50,0), glm::vec2(area.getSize()[0]-50, area.getSize()[1]));
-
-
-  std::vector<std::string> categories = {"UEF","Cybran","Aeon","Seraphim","Other","NonUnit"};
-
-  for (int i = 0; i < categories.size(); i++) {
-    auto names = getNames(categories[i]);
-    std::unique_ptr<ListSelection> x = std::make_unique<ListSelection>(names.first, names.second, modelArea, _graphic.getWindow(), [this](std::string newModel) {
-      setModel(newModel);
-    }, [this](Iyathuum::glmAABB<2> loc, std::string name, bool hovered) {
-      drawIcons(loc, name, hovered);
-    });
-    x->setVisible(false);
-    _lists.push_back(std::move(x));
-  }
-
-  _categories = std::make_unique<ListSelection>(categories, categories, categoriesArea, _graphic.getWindow(), [this](std::string newModel) {
-    for (int i = 0; i < _lists.size(); i++)
-      _lists[i]->setVisible(false);
-    int nr = getNumber(newModel);
-    _lists[nr]->setVisible(true);
-    _currentList = nr;
-
-  }, [this](Iyathuum::glmAABB<2> loc, std::string name, bool hovered) {
-    _graphic.getWindow()->renderer().rectangle().start();
-    _graphic.getWindow()->renderer().rectangle().drawRectangle(loc, hovered ? Iyathuum::Color(0.8f * 255, 0.8f * 255, 0.8f * 255) : Iyathuum::Color(0.4f * 255, 0.4f * 255, 0.4f * 255));
-    _graphic.getWindow()->renderer().rectangle().end();
-    _graphic.getWindow()->renderer().texture().start();
-    _graphic.getWindow()->renderer().texture().draw(*getFaction(name),loc);
-    _graphic.getWindow()->renderer().texture().end();
-  });
+  for (auto& cat : _categories)
+    _names[cat] = getNames(cat);
 
   initScript();
 }
@@ -71,21 +37,7 @@ void UnitModelSelection::setModel(std::string newModel) {
   _graphic._mesh->transformation = glm::scale(glm::mat4(1), glm::vec3(scale, scale, scale));
 }
 
-
-int UnitModelSelection::getNumber(std::string s) {
-  if (s == "UEF")
-    return 0;
-  else if (s == "Cybran")
-    return 1;
-  else if (s == "Aeon")
-    return 2;
-  else if (s == "Seraphim")
-    return 3;
-  else if (s == "Other")
-    return 4;
-  return 5;
-}
-std::shared_ptr<Ahwassa::Texture> UnitModelSelection::getFaction(std::string s) {
+std::shared_ptr<Ahwassa::Texture> UnitModelSelection::getFactionIcon(const std::string& s) {
   if (s == "UEF")
     return _gamedata.icon().getFactionIcon(Athanah::Faction::Uef, Athanah::FactionIconType::Normal);
   else if (s == "Cybran")
@@ -99,57 +51,65 @@ std::shared_ptr<Ahwassa::Texture> UnitModelSelection::getFaction(std::string s) 
   return _gamedata.icon().getTierIcons(Athanah::Faction::Uef,Athanah::TechLevel::T4);
 }
 
-void UnitModelSelection::drawIcons(Iyathuum::glmAABB<2> location, std::string name, bool hovered) {
-  auto bp = _gamedata.blueprint().loadModel(name);
-
-  _graphic.getWindow()->renderer().rectangle().start();
-  _graphic.getWindow()->renderer().rectangle().drawRectangle(location, hovered ? Iyathuum::Color(0.8f * 255, 0.8f * 255, 0.8f * 255) : Iyathuum::Color(0.4f * 255, 0.4f * 255, 0.4f * 255));
-  _graphic.getWindow()->renderer().rectangle().end();
-
-  _graphic.getWindow()->renderer().texture().start();
-
-  auto icon = _gamedata.icon().getIcon(name);
-  location.setSize(glm::vec2(location.getSize()[1], location.getSize()[1]));
-  _graphic.getWindow()->renderer().texture().draw(*_gamedata.icon().getBackgroundIcon(bp->general().icon(),hovered? Athanah::ButtonStatus::Hover:Athanah::ButtonStatus::Normal), location);
-  _graphic.getWindow()->renderer().texture().draw(*icon, location);
-  Iyathuum::glmAABB<2> factionIconLoc(location.getPosition() + glm::vec2(location.getSize()[0],0), glm::vec2(20, 20));
-  _graphic.getWindow()->renderer().texture().draw(*_gamedata.icon().getFactionIcon(bp->general().faction(), Athanah::FactionIconType::Normal), factionIconLoc);
-  Iyathuum::glmAABB<2> stratIconLoc(location.getPosition() + glm::vec2(location.getSize()[0],location.getSize()[1]-20), glm::vec2(20, 20));
-  _graphic.getWindow()->renderer().texture().draw(*_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal), stratIconLoc);
-
-  _graphic.getWindow()->renderer().texture().end();
-  _graphic.getWindow()->renderer().text().start();
-
-  std::string text = bp->description() + "\n" + bp->general().unitName();
-
-  _graphic.getWindow()->renderer().text().drawText(text,location.getPosition() + glm::vec2(location.getSize()[0] + 20,0),0.3f);
-  _graphic.getWindow()->renderer().text().end();
-}
-
 std::shared_ptr<Athanah::SupComModel> UnitModelSelection::getCurrentModel() {
   return _gamedata.model().loadModel(_currentID);
-}
-
-void UnitModelSelection::setVisible(bool value) {
-  _categories->setVisible(value);
-  _lists[_currentList]->setVisible(value);
-}
-
-bool UnitModelSelection::isVisible() {
-  return _categories->isVisible();
 }
 
 void UnitModelSelection::update() {
 }
 
-void UnitModelSelection::draw() {
-  _lists[_currentList]->draw();
-  _categories->draw();
+void UnitModelSelection::menu() {
+  ImGuiIO& io = ImGui::GetIO();
+  if (ImGui::TreeNode("Model"))
+  {
+      for (auto& cat : _categories) {
+          ImGui::Image((ImTextureID)getFactionIcon(cat)->getTextureID(), ImVec2(20* io.FontGlobalScale, 20* io.FontGlobalScale));
+          ImGui::SameLine();
+          if (ImGui::TreeNode(cat.c_str())) {
+              for (auto& name : _names[cat]) {
+                  unitMenuItem(name);
+              }
+              ImGui::TreePop();
+          }
+      }
+      ImGui::TreePop();
+  }
 }
 
-std::pair<std::vector<std::string>, std::vector<std::string>> UnitModelSelection::getNames(std::string category) {
-  std::vector<std::string> names    ;
-  std::vector<std::string> niceNames;
+void UnitModelSelection::unitMenuItem(const std::string& unitName) {
+    ImGuiIO& io = ImGui::GetIO();
+    auto bp = _gamedata.blueprint().loadModel(unitName);
+    ImTextureID strategicIcon = (ImTextureID)_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
+
+    ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    ImGui::SameLine();
+    if (ImGui::TreeNode((bp->general().unitName() + "##" + unitName).c_str())) {
+        auto icon       = _gamedata.icon().getIcon(unitName);
+        auto background = _gamedata.icon().getBackgroundIcon(bp->general().icon(), Athanah::ButtonStatus::Normal);
+        ImVec2 p = ImGui::GetCursorScreenPos();
+        ImVec2 imageSize = ImVec2(50 * io.FontGlobalScale, 50 * io.FontGlobalScale);
+        ImGui::Image((ImTextureID)background->getTextureID(), imageSize);
+        ImGui::GetWindowDrawList()->AddImage((ImTextureID)icon->getTextureID(), p, ImVec2(p.x + imageSize.x, p.y + imageSize.y), ImVec2(0, 0), ImVec2(1, 1));
+        ImGui::SameLine();
+
+        {
+          ImGui::BeginGroup();
+          ImGui::Text(("ID: " + unitName).c_str());
+          ImGui::Image((ImTextureID)_gamedata.icon().getFactionIcon(bp->general().faction(), Athanah::FactionIconType::Normal)->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+          ImGui::SameLine();
+          ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+
+          if (ImGui::Button("Load"))             {
+            setModel(unitName);
+          }
+          ImGui::EndGroup();
+        }
+        ImGui::TreePop();
+    }
+}
+
+std::vector<std::string> UnitModelSelection::getNames(const std::string& category) {
+  std::vector<std::string> result;
 
   for (auto x : _gamedata.model().getAvailableModels()) {
     if (!_gamedata.blueprint().hasBlueprint(x))
@@ -164,11 +124,10 @@ std::pair<std::vector<std::string>, std::vector<std::string>> UnitModelSelection
       (category == "Other"   && faction == Athanah::Faction::Undefined)
       ;
     if (ok) {
-      names    .push_back(x);
-      niceNames.push_back(bp->description() + "\n" + bp->general().unitName());
+      result.push_back(x);
     }
   }
-  return std::make_pair(names,niceNames);
+  return result;
 }
 
 void UnitModelSelection::initScript() {

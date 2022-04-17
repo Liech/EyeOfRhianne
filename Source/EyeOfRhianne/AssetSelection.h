@@ -26,13 +26,13 @@ class Graphic;
 
 class AssetSelection {
 public:
-  AssetSelection(EyeOfRhianneConfiguration&, Iyathuum::glmAABB<2> area,Graphic&);
+  AssetSelection(EyeOfRhianneConfiguration&, Graphic&);
   virtual ~AssetSelection() = default;
 
   void setVisible(bool);
   bool isVisible();
 
-  void draw();
+  void menu();
   void update();
 private:
   void unitVisibility(std::string);
@@ -42,7 +42,6 @@ private:
   std::string                         _current;
   std::unique_ptr<ListSelection>      _list;
   Graphic&                            _graphic;
-  Iyathuum::glmAABB<2>                _area;
   std::unique_ptr<Athanah::Gamedata>  _gamedata;
 
   std::shared_ptr<UnitModelSelection > _units     ;
