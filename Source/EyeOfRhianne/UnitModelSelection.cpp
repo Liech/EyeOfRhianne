@@ -1,32 +1,31 @@
 #include "UnitModelSelection.h"
 
-#include "ListSelection.h"
-#include "Graphic.h"
-
 #include <glm/gtc/matrix_transform.hpp>
-#include "HaasScriptingLib/ScriptEngine.h"
-
-#include "AhwassaGraphicsLib/Core/Window.h"
-
-#include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
-#include "AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h"
-#include "AthanahCommonLib/SupCom/Gamedata/UiTextureFactory.h"
-#include "AthanahCommonLib/SupCom/Gamedata/BlueprintFactory.h"
-#include "AthanahCommonLib/SupCom/SupComModel.h"
-#include "AthanahCommonLib/SupCom/Blueprint/Blueprint.h"
-#include "AthanahCommonLib/SupCom/Blueprint/BlueprintGeneral.h"
-#include "AthanahCommonLib/SupCom/Blueprint/BlueprintDisplay.h"
-#include "AhwassaGraphicsLib/Uniforms/Texture.h"
-
 #include <imgui.h>
+#include <HaasScriptingLib/ScriptEngine.h>
+#include <AhwassaGraphicsLib/Core/Window.h>
+#include <AhwassaGraphicsLib/Uniforms/Texture.h>
 
-UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, std::function<void()> disableAllCall, Graphic& graphic) : 
+#include <AthanahCommonLib/SupCom/Gamedata/Gamedata.h>
+#include <AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h>
+#include <AthanahCommonLib/SupCom/Gamedata/UiTextureFactory.h>
+#include <AthanahCommonLib/SupCom/Gamedata/BlueprintFactory.h>
+#include <AthanahCommonLib/SupCom/SupComModel.h>
+#include <AthanahCommonLib/SupCom/Blueprint/Blueprint.h>
+#include <AthanahCommonLib/SupCom/Blueprint/BlueprintGeneral.h>
+#include <AthanahCommonLib/SupCom/Blueprint/BlueprintDisplay.h>
+
+#include "Graphic.h"
+#include "AnimationSelection.h"
+
+UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, Graphic& graphic) : 
   _graphic(graphic),
   _gamedata(gamedata)
 {
   for (auto& cat : _categories)
     _names[cat] = getNames(cat);
 
+  _animation = std::make_unique<AnimationSelection>(graphic);
   initScript();
 }
 
@@ -56,6 +55,7 @@ std::shared_ptr<Athanah::SupComModel> UnitModelSelection::getCurrentModel() {
 }
 
 void UnitModelSelection::update() {
+  _animation->update();
 }
 
 void UnitModelSelection::menu() {
@@ -99,9 +99,14 @@ void UnitModelSelection::unitMenuItem(const std::string& unitName) {
           ImGui::SameLine();
           ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
 
-          if (ImGui::Button("Load"))             {
+          if (_currentID != unitName && ImGui::Button("Load")) {
             setModel(unitName);
           }
+          if (_currentID == unitName) {
+            _animation->menu();
+          }
+
+
           ImGui::EndGroup();
         }
         ImGui::TreePop();

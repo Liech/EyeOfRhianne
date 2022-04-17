@@ -45,7 +45,6 @@ private:
   std::unique_ptr<Athanah::Gamedata>  _gamedata;
 
   std::shared_ptr<UnitModelSelection > _units     ;
-  std::shared_ptr<AnimationSelection > _animation ;
   std::shared_ptr<SkyBoxSelection    > _skyBox    ;
   std::shared_ptr<RendererSelection  > _renderer  ;
   std::shared_ptr<MapSelection       > _maps      ;

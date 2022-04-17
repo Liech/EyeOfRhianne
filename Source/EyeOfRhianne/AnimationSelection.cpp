@@ -1,37 +1,19 @@
 #include "AnimationSelection.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <imgui.h>
 #include <AthanahCommonLib/SupCom/SupComModel.h>
-#include "AezeselFileIOLib/STLWriter.h"
-#include "AhwassaGraphicsLib/Core/Window.h"
-#include "AhwassaGraphicsLib/Widgets/Button.h"
-#include "ListSelection.h"
+#include <AezeselFileIOLib/STLWriter.h>
+#include <AhwassaGraphicsLib/Core/Window.h>
+#include <AhwassaGraphicsLib/Widgets/Button.h>
+
 #include "Graphic.h"
 
-AnimationSelection::AnimationSelection(Iyathuum::glmAABB<2> area,Graphic& graphic):_graphic(graphic){
-  _area = area;
-  _save = std::make_shared<Ahwassa::Button>("Save",
-    Iyathuum::glmAABB<2>(area.getPosition(), glm::vec2(300, 50)) , [&]() {
-    save();
-  }, graphic.getWindow());
-  _save->setVisible(false);
-}
-
-void AnimationSelection::setVisible(bool value) {
-  _visible = value;
-  if (_model)
-    _save->setVisible(value);
-  if (_list) {
-    _list->setVisible(value);
-    _pause->setVisible(value);
-  }
-}
-
-bool AnimationSelection::isVisible() {
-  return _visible;
+AnimationSelection::AnimationSelection(Graphic& graphic) : _graphic(graphic){
 }
 
 void AnimationSelection::update() {
+  
   if (_play)
     _time = std::fmod(_time + 0.01f, 1);
 
@@ -39,42 +21,38 @@ void AnimationSelection::update() {
     _time = 0;
     _model = _graphic._model;
     _currentAnimation = "None";
-    std::vector<std::string> available =  _graphic._model->availableAnimations();
-
-    std::vector<std::string> anims;
-    anims.push_back("None");
-    anims.insert(anims.begin(), available.begin(), available.end());
-    if (anims.size() > 1) {
-      _list = std::make_unique<ListSelection>(anims, anims, Iyathuum::glmAABB<2>(_area.getPosition() + glm::vec2(0,100), _area.getSize() - glm::vec2(0,100)), _graphic.getWindow(), [&](std::string u) {
-        _currentAnimation = u;
-        _time = 0;
-      });
-      _pause = std::make_shared<Ahwassa::Button>("Pause", Iyathuum::glmAABB<2>(_area.getPosition() + glm::vec2(0, 50), glm::vec2(300, 50)), [&]() {
-        _play = !_play;
-        if (_play)
-          _pause->setText("Pause");
-        else
-          _pause->setText("Play");
-      }, _graphic.getWindow());
-    }
-    else {
-      _list = nullptr;
-      _pause = nullptr;
-    }
-    if(_list) _list->setVisible(_visible);
-    if (_pause) _pause->setVisible(_visible);
   }
-
+  
   if (_graphic._mesh)
     _graphic._mesh->animation = getAnimation();
 }
 
-void AnimationSelection::draw() {
-  if (_save)
-    _save->draw();
-  if (_list) {
-    _list->draw();
-    _pause->draw();
+void AnimationSelection::menu() {
+  auto animations = _graphic._model->availableAnimations();
+  if (animations.size() != 0) {
+    if (ImGui::BeginPopupContextItem("Chose Animation")) {
+      for (auto& anim : _graphic._model->availableAnimations()) {
+        if (ImGui::Button(anim.c_str())) {
+          _currentAnimation = anim;
+          _time = 0;
+        }
+      }
+      ImGui::EndMenu();
+    }
+    if (ImGui::Button("Animate"))
+      ImGui::OpenPopup("Chose Animation");
+    if (_currentAnimation != "None") {
+      ImGui::SameLine();
+      if (_play && ImGui::Button("Pause")) {
+        _play = !_play;
+      } else
+        if (!_play && ImGui::Button("Play")) {
+          _play = !_play;
+        }
+    }
+  }
+  if (ImGui::Button("Export")) {
+    save();
   }
 }
 

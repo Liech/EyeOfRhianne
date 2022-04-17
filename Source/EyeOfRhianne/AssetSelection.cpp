@@ -37,8 +37,8 @@ AssetSelection::AssetSelection(EyeOfRhianneConfiguration& config, Graphic& graph
 
 void AssetSelection::addSelections() {
 
-  _units = std::make_shared<UnitModelSelection>(*_gamedata,[this]() {unitVisibility(false); }, _graphic);
-  //_animation  = std::make_shared<AnimationSelection> (area, _graphic);
+  _units = std::make_shared<UnitModelSelection>(*_gamedata, _graphic);
+  //_animation  = std::make_shared<AnimationSelection> (_graphic);
   //_skyBox     = std::make_shared<SkyBoxSelection>    (_gamedata->skybox(),area, _graphic);
   //_renderer   = std::make_shared<RendererSelection>  (area,_graphic);
   //_maps       = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",area,_graphic, *_gamedata);
@@ -50,8 +50,6 @@ void AssetSelection::unitVisibility(std::string newMenu) {
   if (newMenu != _current)
     hideAll();
   _current = newMenu;
-  if (_current == "Animation")
-    _animation->setVisible(!_animation->isVisible());
   if (_current == "SkyBox")
     _skyBox->setVisible(!_skyBox->isVisible());
   if (_current == "Renderer")
@@ -91,7 +89,7 @@ void AssetSelection::menu() {
 }
 
 void AssetSelection::update() {
-  //_units     ->update();
+  _units     ->update();
   //_animation ->update();
   //_skyBox    ->update();
   //_renderer  ->update();

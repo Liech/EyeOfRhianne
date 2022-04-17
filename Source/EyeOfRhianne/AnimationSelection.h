@@ -4,10 +4,8 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include "IyathuumCoreLib/BaseTypes/glmAABB.h"
-#include "Graphic.h"
 
-class ListSelection;
+class Graphic;
 
 namespace Ahwassa {
   class Button;
@@ -20,27 +18,21 @@ namespace Athanah {
 
 class AnimationSelection {
 public:
-  AnimationSelection(Iyathuum::glmAABB<2> area,Graphic&);
+  AnimationSelection(Graphic&);
+  virtual ~AnimationSelection() = default;
 
   void update();
-  void draw();
-
-  void setVisible(bool value);
-  bool isVisible();
+  void menu();
 
 private:
   void save();
   std::vector<glm::mat4> getAnimation();
 
-
   std::string                           _currentAnimation = "None";
   bool                                  _play = true;
   float                                 _time = 0;
-  Graphic&                               _graphic;
-  std::unique_ptr<ListSelection  >      _list = nullptr;
-  std::shared_ptr<Athanah::SupComModel>  _model;
+  Graphic&                              _graphic;
+  std::shared_ptr<Athanah::SupComModel> _model;
   std::shared_ptr<Ahwassa::Button>      _pause;
   std::shared_ptr<Ahwassa::Button>      _save = nullptr;
-  Iyathuum::glmAABB<2>                  _area;
-  bool                                  _visible = false;
 };
