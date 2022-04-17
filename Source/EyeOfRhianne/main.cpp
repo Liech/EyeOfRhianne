@@ -9,7 +9,7 @@
 #include "AhwassaGraphicsLib/Drawables/FPS.h"
 #include "AhwassaGraphicsLib/Widgets/Button.h"
 #include "AhwassaGraphicsLib/Input/Input.h"
-#include "AhwassaGraphicsLib/Input/FreeCamera.h"
+#include "AhwassaGraphicsLib/Input/ArcBallCamera.h"
 #include "AhwassaGraphicsLib/Uniforms/Texture.h"
 
 #include "AthanahCommonLib/SupCom/SupComModel.h"
@@ -58,23 +58,22 @@ int main(int argc, char** argv) {
   int height = config.ScreenHeight;
 
   Ahwassa::Window w(width, height);
-  std::unique_ptr<Ahwassa::FPS> fps;
-  
-  std::unique_ptr<AssetSelection>         assets   ;
-  std::unique_ptr<GraphicOptions>         graphicUI;
+
+  std::unique_ptr<Ahwassa::FPS>           fps;
+  std::unique_ptr<AssetSelection>         assets;
   std::unique_ptr<Graphic>                graphic;
   std::unique_ptr<Ahwassa::IMGUIRenderer> ui;
 
-  std::shared_ptr<Ahwassa::FreeCamera> freeCam;
+  std::shared_ptr<Ahwassa::ArcBallCamera> arcCam;
   w.Startup = [&]() {
-    freeCam = std::make_shared<Ahwassa::FreeCamera>(w.camera(), w.input(), Iyathuum::Key::MOUSE_BUTTON_1);
+    arcCam = std::make_shared<Ahwassa::ArcBallCamera>(w.camera(), w.input(), Iyathuum::Key::MOUSE_BUTTON_1);
     w.camera()->setPosition(glm::vec3(20, 20, 20));
-    //w.input().addUIElement(freeCam.get(), 1);
+    w.input().addUIElement(arcCam.get(), 1);
 
-    graphic = std::make_unique<Graphic               >(&w);
-    assets  = std::make_unique<AssetSelection        >(config, *graphic);
-    fps     = std::make_unique<Ahwassa::FPS          >(&w);
-    ui      = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
+    graphic    = std::make_unique<Graphic               >(&w);
+    assets     = std::make_unique<AssetSelection        >(config, *graphic);
+    fps        = std::make_unique<Ahwassa::FPS          >(&w);
+    ui         = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
   };
 
   w.Update = [&]() {
@@ -86,7 +85,7 @@ int main(int argc, char** argv) {
     io.FontGlobalScale = 2;
     ui->start();
     assets->menu();
-    //ImGui::ShowDemoWindow();
+    ImGui::ShowDemoWindow();
     ui->end();
 
     if (config.ShowFPS) 

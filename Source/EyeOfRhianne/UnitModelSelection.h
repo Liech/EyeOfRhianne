@@ -6,7 +6,6 @@
 #include <vector>
 #include <map>
 #include <functional>
-#include "IyathuumCoreLib/BaseTypes/glmAABB.h"
 #include "AthanahCommonLib/SupCom/SupComEnums.h"
 #include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
 #include <nlohmann/json.hpp>
