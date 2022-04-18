@@ -76,54 +76,55 @@ void UnitModelSelection::menu() {
 }
 
 void UnitModelSelection::unitMenuItem(const std::string& unitName) {
-    ImGuiIO& io = ImGui::GetIO();
-    auto bp = _gamedata.blueprint().loadModel(unitName);
-    ImTextureID strategicIcon = (ImTextureID)_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
+  ImGuiIO& io = ImGui::GetIO();
+  auto bp = _gamedata.blueprint().loadModel(unitName);
+  ImTextureID strategicIcon = (ImTextureID)_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
 
-    ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+  ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+  ImGui::SameLine();
+  if (true) {//ImGui::TreeNode((bp->general().unitName() + "##" + unitName).c_str())
+    ImGui::Text(bp->general().unitName().c_str());
+    auto icon = _gamedata.icon().getIcon(unitName);
+    auto background = _gamedata.icon().getBackgroundIcon(bp->general().icon(), Athanah::ButtonStatus::Normal);
+    ImVec2 p = ImGui::GetCursorScreenPos();
+    ImVec2 imageSize = ImVec2(50 * io.FontGlobalScale, 50 * io.FontGlobalScale);
+    ImGui::Image((ImTextureID)background->getTextureID(), imageSize);
+    ImGui::GetWindowDrawList()->AddImage((ImTextureID)icon->getTextureID(), p, ImVec2(p.x + imageSize.x, p.y + imageSize.y), ImVec2(0, 0), ImVec2(1, 1));
     ImGui::SameLine();
-    if (ImGui::TreeNode((bp->general().unitName() + "##" + unitName).c_str())) {
-        auto icon       = _gamedata.icon().getIcon(unitName);
-        auto background = _gamedata.icon().getBackgroundIcon(bp->general().icon(), Athanah::ButtonStatus::Normal);
-        ImVec2 p = ImGui::GetCursorScreenPos();
-        ImVec2 imageSize = ImVec2(50 * io.FontGlobalScale, 50 * io.FontGlobalScale);
-        ImGui::Image((ImTextureID)background->getTextureID(), imageSize);
-        ImGui::GetWindowDrawList()->AddImage((ImTextureID)icon->getTextureID(), p, ImVec2(p.x + imageSize.x, p.y + imageSize.y), ImVec2(0, 0), ImVec2(1, 1));
-        ImGui::SameLine();
 
-        {
-          ImGui::BeginGroup();
-          ImGui::Text(("ID: " + unitName).c_str());
-          ImGui::Image((ImTextureID)_gamedata.icon().getFactionIcon(bp->general().faction(), Athanah::FactionIconType::Normal)->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
-          ImGui::SameLine();
-          ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    {
+      ImGui::BeginGroup();
+      ImGui::Text(("ID: " + unitName).c_str());
+      ImGui::Image((ImTextureID)_gamedata.icon().getFactionIcon(bp->general().faction(), Athanah::FactionIconType::Normal)->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+      ImGui::SameLine();
+      ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
 
-          if (_currentID != unitName && ImGui::Button("Load")) {
-            setModel(unitName);
-          }
-          if (_currentID == unitName) {
-            auto animations = _graphic._model->availableAnimations();
-            if (animations.size() != 0) {
-              if (ImGui::BeginPopupContextItem("Chose Animation")) {
-                for (auto& anim : _graphic._model->availableAnimations()) {
-                  if (ImGui::Button(anim.c_str())) {
-                    _graphic._currentAnimation = anim;
-                    _graphic._time = 0;
-                  }
-                }
-                ImGui::EndMenu();
+      if (_currentID != unitName && ImGui::Button("Load")) {
+        setModel(unitName);
+      }
+      if (_currentID == unitName) {
+        auto animations = _graphic._model->availableAnimations();
+        if (animations.size() != 0) {
+          if (ImGui::BeginPopupContextItem("Chose Animation")) {
+            for (auto& anim : _graphic._model->availableAnimations()) {
+              if (ImGui::Button(anim.c_str())) {
+                _graphic._currentAnimation = anim;
+                _graphic._time = 0;
               }
-              if (ImGui::Button("Animate"))
-                ImGui::OpenPopup("Chose Animation");
             }
-            if (ImGui::Button("Export")) {
-              save();
-            }
+            ImGui::EndMenu();
           }
-          ImGui::EndGroup();
+          if (ImGui::Button("Animate"))
+            ImGui::OpenPopup("Chose Animation");
         }
-        ImGui::TreePop();
+        if (ImGui::Button("Export")) {
+          save();
+        }
+      }
+      ImGui::EndGroup();
     }
+    //ImGui::TreePop();
+  }
 }
 
 std::vector<std::string> UnitModelSelection::getNames(const std::string& category) {

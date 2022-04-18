@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   int width  = config.ScreenWidth;
   int height = config.ScreenHeight;
 
-  Ahwassa::Window w(width, height);
+  Ahwassa::Window w(glm::ivec2(width,height));
 
   std::unique_ptr<Ahwassa::FPS>           fps;
   std::unique_ptr<AssetSelection>         assets;
@@ -92,6 +92,10 @@ int main(int argc, char** argv) {
     if (config.ShowFPS) 
      fps->draw();    
   };
+  w.Resize = [&](const glm::ivec2& newResolution) {
+    
+  };
+
   w.run();
 
   Iyathuum::DatabaseTerminator::terminateAll();

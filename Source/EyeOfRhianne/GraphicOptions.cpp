@@ -14,7 +14,7 @@
 GraphicOptions::GraphicOptions(std::function<void()> disableAllCall, Graphic& graphic): _graphic(graphic){
   _disableAllCall = disableAllCall;
 
-  _showHide = std::make_shared<Ahwassa::Button>("Graphic", Iyathuum::glmAABB<2>(glm::vec2(300, _graphic.getWindow()->getHeight() - 50), glm::vec2(300, 50)), [this]() {
+  _showHide = std::make_shared<Ahwassa::Button>("Graphic", Iyathuum::glmAABB<2>(glm::vec2(300, _graphic.getWindow()->getResolution()[0] - 50), glm::vec2(300, 50)), [this]() {
     _disableAllCall();
     setVisible(!isVisible());
   }, _graphic.getWindow());
@@ -32,7 +32,7 @@ GraphicOptions::GraphicOptions(std::function<void()> disableAllCall, Graphic& gr
 }
 
 void GraphicOptions::makeBloomOptions() {
-  _bloomOptions = std::make_shared<Ahwassa::ListLayout>(Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(300, _graphic.getWindow()->getHeight() - 50)), _graphic.getWindow());
+  _bloomOptions = std::make_shared<Ahwassa::ListLayout>(Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(300, _graphic.getWindow()->getResolution()[0] - 50)), _graphic.getWindow());
   _bloomOptions->addLabel("Bloom Options:");
   _bloomOptions->addLabel("Size");
   _bloomOptions->addSlider(8, 0, 50, [this](float value) {_graphic._bloom->setSize(value); });

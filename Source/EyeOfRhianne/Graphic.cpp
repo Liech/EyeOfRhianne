@@ -25,9 +25,9 @@
 Graphic::Graphic(Ahwassa::Window* window) {
   _window         = window;
   _scripts = std::make_shared<Haas::ScriptEngine>();
-  _composer       = std::make_shared<Ahwassa::DeferredComposer>(_window, _window->getWidth(), _window->getHeight());
-  _bloom          = std::make_shared<Ahwassa::Bloom>(_window, _window->getWidth(), _window->getHeight());
-  _cubeReflection = std::make_shared<Ahwassa::CubeReflection  >(_window, _window->getWidth(), _window->getHeight());
+  _composer       = std::make_shared<Ahwassa::DeferredComposer     >(_window, _window->getResolution());
+  _bloom          = std::make_shared<Ahwassa::Bloom                >(_window, _window->getResolution());
+  _cubeReflection = std::make_shared<Ahwassa::CubeReflection       >(_window, _window->getResolution());
   _renderer       = std::make_shared<Athanah::SupComMeshRendererDef>(_window->camera());
   _reflectionTexture = std::make_shared<Ahwassa::CubeTexture>("Reflection", 0);
 
@@ -50,7 +50,7 @@ void Graphic::update() {
 void Graphic::draw() {
   drawScene();
   _window->renderer().texture().start();
-  _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(_window->getWidth(), _window->getHeight())), true);
+  _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), (glm::vec2)_window->getResolution()), true);
   _window->renderer().texture().end();
 
 }
@@ -72,7 +72,7 @@ void Graphic::drawScene() {
 
 std::unique_ptr<Iyathuum::MultiDimensionalArray<Iyathuum::Color, 2>> Graphic::screenshot() {
   _window->renderer().texture().start();
-  _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(_window->getWidth(), _window->getHeight())), true);
+  _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), (glm::vec2)_window->getResolution()), true);
   _window->renderer().texture().end();
 
   return _textures[_renderedTexture]->getImage();
