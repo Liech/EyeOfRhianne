@@ -78,6 +78,7 @@ int main(int argc, char** argv) {
 
   w.Update = [&]() {
     assets->update();
+    graphic->update();
 
     graphic->draw();
 

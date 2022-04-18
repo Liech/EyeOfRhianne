@@ -11,7 +11,6 @@ find_package(imgui REQUIRED)
 ############################################################################
 
 set(Header_Files
-    "Source/EyeOfRhianne/AnimationSelection.h"
     "Source/EyeOfRhianne/AssetSelection.h"
     "Source/EyeOfRhianne/EyeOfRhianneConfiguration.h"
     "Source/EyeOfRhianne/Graphic.h"
@@ -22,11 +21,11 @@ set(Header_Files
     "Source/EyeOfRhianne/SkyBoxSelection.h"
     "Source/EyeOfRhianne/SoundSelection.h"
     "Source/EyeOfRhianne/UnitModelSelection.h"
+    "Source/EyeOfRhianne/AnimationControlDialog.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
 set(Source_Files
-    "Source/EyeOfRhianne/AnimationSelection.cpp"
     "Source/EyeOfRhianne/AssetSelection.cpp"
     "Source/EyeOfRhianne/EyeOfRhianneConfiguration.cpp"
     "Source/EyeOfRhianne/Graphic.cpp"
@@ -39,6 +38,7 @@ set(Source_Files
     "Source/EyeOfRhianne/SkyBoxSelection.cpp"
     "Source/EyeOfRhianne/SoundSelection.cpp"
     "Source/EyeOfRhianne/UnitModelSelection.cpp"
+    "Source/EyeOfRhianne/AnimationControlDialog.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})
 

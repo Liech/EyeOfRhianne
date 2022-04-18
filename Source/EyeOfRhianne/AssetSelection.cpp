@@ -1,7 +1,6 @@
 #include "AssetSelection.h"
 
 #include "UnitModelSelection.h"
-#include "AnimationSelection.h"
 #include "SkyBoxSelection.h"
 #include "RendererSelection.h"
 #include "ListSelection.h"
@@ -9,6 +8,7 @@
 #include "SoundSelection.h"
 #include "ScriptSelection.h"
 #include "Graphic.h"
+#include "AnimationControlDialog.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "IyathuumCoreLib/BaseTypes/glmAABB.h"
@@ -32,80 +32,46 @@ AssetSelection::AssetSelection(EyeOfRhianneConfiguration& config, Graphic& graph
   }
   _gamedata = std::make_unique<Athanah::Gamedata>(config.SupComPath,config.UseSCD);
 
-  addSelections();
+  addDialogs();
 }  
 
-void AssetSelection::addSelections() {
+void AssetSelection::addDialogs() {
 
-  _units = std::make_shared<UnitModelSelection>(*_gamedata, _graphic);
-  //_animation  = std::make_shared<AnimationSelection> (_graphic);
-  //_skyBox     = std::make_shared<SkyBoxSelection>    (_gamedata->skybox(),area, _graphic);
+  _units            = std::make_unique<UnitModelSelection>    (*_gamedata, _graphic);
+  _animationControl = std::make_unique<AnimationControlDialog>(_graphic);
+  //_skyBox           = std::make_unique<SkyBoxSelection>       (_gamedata->skybox(), _graphic);
   //_renderer   = std::make_shared<RendererSelection>  (area,_graphic);
   //_maps       = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",area,_graphic, *_gamedata);
   //_scripts    = std::make_shared<ScriptSelection>    (area,_graphic);
-  //_sounds     = std::make_shared<SoundSelection >    (_config.SupComPath + "\\sounds",area,_graphic);
-}
-
-void AssetSelection::unitVisibility(std::string newMenu) {
-  if (newMenu != _current)
-    hideAll();
-  _current = newMenu;
-  if (_current == "SkyBox")
-    _skyBox->setVisible(!_skyBox->isVisible());
-  if (_current == "Renderer")
-    _renderer->setVisible(!_renderer->isVisible());
-  if (_current == "Map")
-    _maps->setVisible(!_maps->isVisible());
-  if (_current == "Scripts")
-    _scripts->setVisible(!_scripts->isVisible());
-  if (_current == "Sound")
-    _sounds->setVisible(!_sounds->isVisible());
-}
-
-void AssetSelection::hideAll() {
-  //_units     ->setVisible(false);
-  //_animation ->setVisible(false);
-  //_skyBox    ->setVisible(false);
-  //_renderer  ->setVisible(false);
-  //_maps      ->setVisible(false);
-  //_scripts   ->setVisible(false);
-  //_sounds    ->setVisible(false);
+  _sounds     = std::make_unique<SoundSelection >    (_config.SupComPath + "\\sounds",_graphic);
 }
 
 void AssetSelection::menu() {
   ImGui::Begin("Assets");
-  
   _units->menu();
-
+  //_skyBox->menu();
+  _sounds->menu();  
   ImGui::End();
 
-  //_animation ->draw();
+  if (_graphic._currentAnimation != "None") {
+    ImGui::Begin("Animation Control");
+    _animationControl->menu();
+    ImGui::End();
+  }
+
   //_skyBox    ->draw();
   //_renderer  ->draw();
   //_maps      ->draw();
   //_scripts   ->draw();
-  //_sounds    ->draw();
   //_list      ->draw();
 }
 
 void AssetSelection::update() {
-  _units     ->update();
-  //_animation ->update();
-  //_skyBox    ->update();
+  _units ->update();
+  _sounds->update();
+  //_skyBox->update();
   //_renderer  ->update();
   //_maps      ->update();
   //_scripts   ->update();
   //_sounds    ->update();
-}
-
-void AssetSelection::setVisible(bool visible) {
-  _list->setVisible(visible);
-  if (!visible)
-    hideAll();
-  else
-    unitVisibility(_current);
-}
-
-bool AssetSelection::isVisible() {
-  return _list->isVisible();
 }

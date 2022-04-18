@@ -29,13 +29,19 @@ class Graphic {
 public:
   Graphic(Ahwassa::Window*);
 
+  void update();
   void draw();
   std::unique_ptr<Iyathuum::MultiDimensionalArray<Iyathuum::Color,2>> screenshot();
-  void setModel(std::shared_ptr<Athanah::SupComModel>);
+  void setModel(std::shared_ptr<Athanah::SupComModel>); 
+  std::vector<glm::mat4> getAnimation();
+
 
   std::shared_ptr<Athanah::SupComMesh> _mesh;
   int                                  _renderedTexture = 0;
   std::shared_ptr<Athanah::SupComModel> _model;
+  bool                                  _playAnimation = true;
+  float                                 _time = 0;
+  std::string                           _currentAnimation = "None";
 
   std::vector<std::shared_ptr<Ahwassa::Texture>>    _textures;
   std::shared_ptr<Athanah::SupComMeshRendererDef>   _renderer;

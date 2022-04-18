@@ -15,7 +15,6 @@ namespace Athanah {
 }
 
 class UnitModelSelection;
-class AnimationSelection;
 class SkyBoxSelection;
 class ListSelection;
 class RendererSelection;
@@ -23,33 +22,31 @@ class MapSelection;
 class ScriptSelection;
 class SoundSelection;
 class Graphic;
+class AnimationControlDialog;
 
 class AssetSelection {
 public:
   AssetSelection(EyeOfRhianneConfiguration&, Graphic&);
   virtual ~AssetSelection() = default;
 
-  void setVisible(bool);
-  bool isVisible();
-
   void menu();
   void update();
 private:
-  void unitVisibility(std::string);
-  void hideAll();
-  void addSelections();
+  void addDialogs();
 
   std::string                         _current;
   std::unique_ptr<ListSelection>      _list;
   Graphic&                            _graphic;
   std::unique_ptr<Athanah::Gamedata>  _gamedata;
 
-  std::shared_ptr<UnitModelSelection > _units     ;
-  std::shared_ptr<SkyBoxSelection    > _skyBox    ;
   std::shared_ptr<RendererSelection  > _renderer  ;
   std::shared_ptr<MapSelection       > _maps      ;
   std::shared_ptr<ScriptSelection    > _scripts   ;
-  std::shared_ptr<SoundSelection     > _sounds    ;
- 
+
+  std::unique_ptr<UnitModelSelection >    _units;
+  std::unique_ptr<AnimationControlDialog> _animationControl;
+  std::unique_ptr<SoundSelection>         _sounds;
+  std::unique_ptr<SkyBoxSelection    >    _skyBox;
+
   EyeOfRhianneConfiguration& _config;
 };

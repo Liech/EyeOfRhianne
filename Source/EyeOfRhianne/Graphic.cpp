@@ -3,23 +3,24 @@
 #include <filesystem>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "AhwassaGraphicsLib/Core/Window.h"
-#include "AhwassaGraphicsLib/Core/Renderer.h"
-#include "AhwassaGraphicsLib/Core/Camera.h"
-#include "AhwassaGraphicsLib/Uniforms/CubeTexture.h"
-#include "AhwassaGraphicsLib/Uniforms/Texture.h"
-#include "AhwassaGraphicsLib/PostProcessing/DeferredComposer.h"
-#include "AhwassaGraphicsLib/PostProcessing/AdditiveComposer.h"
-#include "AhwassaGraphicsLib/PostProcessing/Bloom.h"
-#include "AhwassaGraphicsLib/PostProcessing/CubeReflection.h"
-#include "AhwassaGraphicsLib/Renderer/BoxRenderer.h"
-#include "AhwassaGraphicsLib/Uniforms/Rendertarget.h"
+#include <AhwassaGraphicsLib/Core/Window.h>
+#include <AhwassaGraphicsLib/Core/Renderer.h>
+#include <AhwassaGraphicsLib/Core/Camera.h>
+#include <AhwassaGraphicsLib/Uniforms/CubeTexture.h>
+#include <AhwassaGraphicsLib/Uniforms/Texture.h>
+#include <AhwassaGraphicsLib/PostProcessing/DeferredComposer.h>
+#include <AhwassaGraphicsLib/PostProcessing/AdditiveComposer.h>
+#include <AhwassaGraphicsLib/PostProcessing/Bloom.h>
+#include <AhwassaGraphicsLib/PostProcessing/CubeReflection.h>
+#include <AhwassaGraphicsLib/Renderer/BoxRenderer.h>
+#include <AhwassaGraphicsLib/Uniforms/Rendertarget.h>
 
-#include "HaasScriptingLib/ScriptEngine.h"
-#include "AhwassaGraphicsLib/Renderer/BasicTexture2DRenderer.h"
-#include "AthanahCommonLib/SupCom/SupComMeshRendererDef.h"
-#include "AthanahCommonLib/SkyBox.h"
-#include "AthanahCommonLib/Map/MapRenderer.h"
+#include <HaasScriptingLib/ScriptEngine.h>
+#include <AhwassaGraphicsLib/Renderer/BasicTexture2DRenderer.h>
+#include <AthanahCommonLib/SupCom/SupComMeshRendererDef.h>
+#include <AthanahCommonLib/SupCom/SupComModel.h>
+#include <AthanahCommonLib/SkyBox.h>
+#include <AthanahCommonLib/Map/MapRenderer.h>
 
 Graphic::Graphic(Ahwassa::Window* window) {
   _window         = window;
@@ -39,10 +40,14 @@ Graphic::Graphic(Ahwassa::Window* window) {
   _textures.push_back(_composer->getDepth());
 }
 
-void Graphic::draw() {
-  //if (_mesh)
-  //  _mesh->transformation = glm::rotate(_mesh->transformation, 0.001f, glm::vec3(0, 1, 0));
+void Graphic::update() {
+  if (_playAnimation)
+    _time = std::fmod(_time + 0.01f, 1);
+  if (_mesh)
+    _mesh->animation = getAnimation();
+}
 
+void Graphic::draw() {
   drawScene();
   _window->renderer().texture().start();
   _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(_window->getWidth(), _window->getHeight())), true);
@@ -83,5 +88,13 @@ void Graphic::setModel(std::shared_ptr<Athanah::SupComModel> model) {
   _mesh->model = model;
   _mesh->teamColor = Iyathuum::Color(rand() % 255, rand() % 255, rand() % 255);
   _mesh->transformation = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, 0));
-  _renderer->addMesh(_mesh);
+  _renderer->addMesh(_mesh);   
+  _time = 0;
+  _currentAnimation = "None";
+}
+
+std::vector<glm::mat4> Graphic::getAnimation() {
+  if (_currentAnimation == "None" || !_model)
+    return std::vector<glm::mat4>();
+  return _model->getAnimation(_currentAnimation, _model->getAnimationLength(_currentAnimation) * _time);
 }

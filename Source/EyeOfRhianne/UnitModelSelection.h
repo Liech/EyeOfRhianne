@@ -17,7 +17,6 @@ namespace Athanah {
   class SupComModel;
 }
 
-class AnimationSelection;
 class Graphic;
 
 class UnitModelSelection {
@@ -27,6 +26,7 @@ public:
 
   void menu();
   void update();
+  void save();
 
   std::shared_ptr<Athanah::SupComModel> getCurrentModel();
 
@@ -44,8 +44,6 @@ private:
   Athanah::Gamedata&                              _gamedata       ;
   std::string                                     _currentID = "" ;
   std::map<std::string, std::vector<std::string>> _names;
-
-  std::unique_ptr< AnimationSelection> _animation;
 
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setUnit;
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setUnitColor;
