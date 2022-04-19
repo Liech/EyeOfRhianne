@@ -34,7 +34,7 @@ public:
   std::unique_ptr<Iyathuum::MultiDimensionalArray<Iyathuum::Color,2>> screenshot();
   void setModel(std::shared_ptr<Athanah::SupComModel>); 
   std::vector<glm::mat4> getAnimation();
-
+  void setResolution(const glm::ivec2&);
 
   std::shared_ptr<Athanah::SupComMesh> _mesh;
   int                                  _renderedTexture = 0;

@@ -31,7 +31,6 @@ Graphic::Graphic(Ahwassa::Window* window) {
   _renderer       = std::make_shared<Athanah::SupComMeshRendererDef>(_window->camera());
   _reflectionTexture = std::make_shared<Ahwassa::CubeTexture>("Reflection", 0);
 
-
   _textures.push_back(_bloom->getResult());
   _textures.push_back(_cubeReflection->getResult());
   _textures.push_back(_composer->getResult());
@@ -52,7 +51,6 @@ void Graphic::draw() {
   _window->renderer().texture().start();
   _window->renderer().texture().draw(*_textures[_renderedTexture], Iyathuum::glmAABB<2>(glm::vec2(0, 0), (glm::vec2)_window->getResolution()), true);
   _window->renderer().texture().end();
-
 }
 
 void Graphic::drawScene() {
@@ -97,4 +95,8 @@ std::vector<glm::mat4> Graphic::getAnimation() {
   if (_currentAnimation == "None" || !_model)
     return std::vector<glm::mat4>();
   return _model->getAnimation(_currentAnimation, _model->getAnimationLength(_currentAnimation) * _time);
+}
+
+void Graphic::setResolution(const glm::ivec2& resolution){
+  _composer->setResolution(resolution);
 }

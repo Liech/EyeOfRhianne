@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
      fps->draw();    
   };
   w.Resize = [&](const glm::ivec2& newResolution) {
-    
+    graphic->setResolution(newResolution);
   };
 
   w.run();
