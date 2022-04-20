@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
      fps->draw();    
   };
   w.Resize = [&](const glm::ivec2& newResolution) {
+    arcCam->setLocalPosition(Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(newResolution[0], newResolution[1])));
     graphic->setResolution(newResolution);
   };
 

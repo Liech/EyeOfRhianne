@@ -98,5 +98,7 @@ std::vector<glm::mat4> Graphic::getAnimation() {
 }
 
 void Graphic::setResolution(const glm::ivec2& resolution){
-  _composer->setResolution(resolution);
+  _composer      ->setResolution(resolution);
+  _bloom         ->setResolution(resolution);
+  _cubeReflection->setResolution(resolution);
 }
