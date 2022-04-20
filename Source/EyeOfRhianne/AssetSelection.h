@@ -31,6 +31,7 @@ public:
 
   void menu();
   void update();
+  Athanah::Gamedata& gamedata();
 private:
   void addDialogs();
 

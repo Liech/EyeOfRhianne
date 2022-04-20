@@ -13,6 +13,8 @@
 #include "AhwassaGraphicsLib/Uniforms/Texture.h"
 
 #include "AthanahCommonLib/SupCom/SupComModel.h"
+#include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
+#include "AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h"
 #include "AhwassaGraphicsLib/PostProcessing/Bloom.h"
 
 #include "AezeselFileIOLib/STLWriter.h"

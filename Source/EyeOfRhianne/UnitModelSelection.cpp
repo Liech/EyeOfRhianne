@@ -2,6 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
+#include <iostream>
 
 #include <AthanahCommonLib/SupCom/Gamedata/Gamedata.h>
 #include <AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h>
@@ -99,7 +100,8 @@ void UnitModelSelection::unitMenuItem(const std::string& unitName) {
       ImGui::SameLine();
       ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
 
-      if (_currentID != unitName && ImGui::Button("Load")) {
+      bool loadUnit = ImGui::Button(("Load##"+unitName).c_str());
+      if (loadUnit) {
         setModel(unitName);
       }
       if (_currentID == unitName) {
@@ -123,7 +125,6 @@ void UnitModelSelection::unitMenuItem(const std::string& unitName) {
       }
       ImGui::EndGroup();
     }
-    //ImGui::TreePop();
   }
 }
 

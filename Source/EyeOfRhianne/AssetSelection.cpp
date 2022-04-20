@@ -75,3 +75,7 @@ void AssetSelection::update() {
   //_scripts   ->update();
   //_sounds    ->update();
 }
+
+Athanah::Gamedata& AssetSelection::gamedata() {
+  return *_gamedata;
+}
