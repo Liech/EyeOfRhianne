@@ -1,13 +1,13 @@
-#include "AssetSelection.h"
+#include "AssetMainMenu.h"
 
 #include "UnitMenuItem.h"
 #include "SkyBoxMenuItem.h"
-#include "RendererSelection.h"
 #include "ListSelection.h"
 #include "MapSelection.h"
 #include "SoundMenuItem.h"
 #include "ScriptSelection.h"
 #include "Graphic.h"
+#include "GraphicOptionsMenuItem.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "IyathuumCoreLib/BaseTypes/glmAABB.h"
@@ -18,7 +18,7 @@
 
 #include <imgui.h>
 
-AssetSelection::AssetSelection(EyeOfRhianneConfiguration& config, Graphic& graphic) : _graphic(graphic), _config(config){
+AssetMainMenu::AssetMainMenu(EyeOfRhianneConfiguration& config, Graphic& graphic) : _graphic(graphic), _config(config){
 
   if (config.UseSCD)
   {
@@ -34,41 +34,47 @@ AssetSelection::AssetSelection(EyeOfRhianneConfiguration& config, Graphic& graph
   addDialogs();
 }  
 
-void AssetSelection::addDialogs() {
+void AssetMainMenu::addDialogs() {
 
   _units            = std::make_unique<UnitMenuItem>    (*_gamedata, _graphic);
-  _skyBox           = std::make_unique<SkyBoxMenuItem>       (_gamedata->skybox(), _graphic);
-  //_renderer   = std::make_shared<RendererSelection>  (area,_graphic);
+  _skyBox           = std::make_unique<SkyBoxMenuItem>  (_gamedata->skybox(), _graphic);
+  _graphicOptions   = std::make_unique<GraphicOptionsMenuItem>(_graphic);
   //_maps       = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",area,_graphic, *_gamedata);
   //_scripts    = std::make_shared<ScriptSelection>    (area,_graphic);
   _sounds     = std::make_unique<SoundMenuItem >    (_config.SupComPath + "\\sounds",_graphic);
 }
 
-void AssetSelection::menu() {
+void AssetMainMenu::menu() {
   ImGui::SetNextWindowPos(ImVec2(0, 0));
   ImGui::SetNextItemWidth(ImGui::GetFontSize() * 50);
   ImGui::Begin("Assets",0, ImGuiWindowFlags_NoMove );
   _units->menu();
   _skyBox->menu();
   _sounds->menu();  
+  optionsMenu();
   ImGui::End();
+  if (_showImguiDemo)
+    ImGui::ShowDemoWindow();
 
-  //_renderer  ->draw();
   //_maps      ->draw();
   //_scripts   ->draw();
-  //_list      ->draw();
 }
 
-void AssetSelection::update() {
+void AssetMainMenu::optionsMenu() {
+  if (ImGui::TreeNode("Options")) {
+    _graphicOptions->menu();
+    ImGui::Checkbox("Show IMGUI Demo Window", &_showImguiDemo);
+  }
+}
+
+void AssetMainMenu::update() {
   _units ->update();
   _sounds->update();
   _skyBox->update();
-  //_renderer  ->update();
   //_maps      ->update();
   //_scripts   ->update();
-  //_sounds    ->update();
 }
 
-Athanah::Gamedata& AssetSelection::gamedata() {
+Athanah::Gamedata& AssetMainMenu::gamedata() {
   return *_gamedata;
 }

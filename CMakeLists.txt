@@ -11,12 +11,11 @@ find_package(imgui REQUIRED)
 ############################################################################
 
 set(Header_Files
-    "Source/EyeOfRhianne/AssetSelection.h"
+    "Source/EyeOfRhianne/AssetMainMenu.h"
     "Source/EyeOfRhianne/EyeOfRhianneConfiguration.h"
     "Source/EyeOfRhianne/Graphic.h"
-    "Source/EyeOfRhianne/GraphicOptions.h"
+    "Source/EyeOfRhianne/GraphicOptionsMenuItem.h"
     "Source/EyeOfRhianne/MapSelection.h"
-    "Source/EyeOfRhianne/RendererSelection.h"
     "Source/EyeOfRhianne/ScriptSelection.h"
     "Source/EyeOfRhianne/SkyBoxMenuItem.h"
     "Source/EyeOfRhianne/SoundMenuItem.h"
@@ -25,14 +24,13 @@ set(Header_Files
 source_group("Header Files" FILES ${Header_Files})
 
 set(Source_Files
-    "Source/EyeOfRhianne/AssetSelection.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu.cpp"
     "Source/EyeOfRhianne/EyeOfRhianneConfiguration.cpp"
     "Source/EyeOfRhianne/Graphic.cpp"
-    "Source/EyeOfRhianne/GraphicOptions.cpp"
+    "Source/EyeOfRhianne/GraphicOptionsMenuItem.cpp"
     "Source/EyeOfRhianne/ListSelection.cpp"
     "Source/EyeOfRhianne/main.cpp"
     "Source/EyeOfRhianne/MapSelection.cpp"
-    "Source/EyeOfRhianne/RendererSelection.cpp"
     "Source/EyeOfRhianne/ScriptSelection.cpp"
     "Source/EyeOfRhianne/SkyBoxMenuItem.cpp"
     "Source/EyeOfRhianne/SoundMenuItem.cpp"

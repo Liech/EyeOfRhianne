@@ -23,8 +23,8 @@
 
 #include "ListSelection.h"
 
-#include "AssetSelection.h"
-#include "GraphicOptions.h"
+#include "AssetMainMenu.h"
+#include "GraphicOptionsMenuItem.h"
 #include "Graphic.h"
 #include "EyeOfRhianneConfiguration.h"
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
   Ahwassa::Window w(glm::ivec2(width,height));
 
   std::unique_ptr<Ahwassa::FPS>           fps;
-  std::unique_ptr<AssetSelection>         assets;
+  std::unique_ptr<AssetMainMenu>         assets;
   std::unique_ptr<Graphic>                graphic;
   std::unique_ptr<Ahwassa::IMGUIRenderer> ui;
 
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
     w.input().addUIElement(arcCam.get(), 1);
 
     graphic    = std::make_unique<Graphic               >(&w);
-    assets     = std::make_unique<AssetSelection        >(config, *graphic);
+    assets     = std::make_unique<AssetMainMenu        >(config, *graphic);
     fps        = std::make_unique<Ahwassa::FPS          >(&w);
     ui         = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
   };
@@ -88,7 +88,6 @@ int main(int argc, char** argv) {
     io.FontGlobalScale = 2;
     ui->start();
     assets->menu();
-    ImGui::ShowDemoWindow();
     ui->end();
 
     if (config.ShowFPS) 

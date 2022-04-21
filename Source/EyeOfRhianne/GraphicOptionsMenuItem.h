@@ -18,28 +18,23 @@ namespace Ahwassa {
 
 class ListSelection;
 
-class GraphicOptions {
+class GraphicOptionsMenuItem {
 public:
-  GraphicOptions(std::function<void()> disableAllCall, Graphic& graphic);
+  GraphicOptionsMenuItem(Graphic& graphic);
 
   void update();
-  void drawUI();
-
-  void setVisible(bool visible);
-  bool isVisible();
+  void menu();
 
   std::shared_ptr<Ahwassa::Texture> getCurrentTexture();
 
 private:
   void makeBloomOptions();
-  void initScript();
+  void makeRendererOptions();
+  void initBloomScript();
+  void initRendererScript();
 
-  std::shared_ptr<Ahwassa::Button>               _showHide;
-  bool                                           _visible = false;
-  std::function<void()>                          _disableAllCall;
   std::map<std::string,int> _textures;
   std::shared_ptr<Ahwassa::Texture>              _currentTexture;
-  std::shared_ptr<Ahwassa::ListLayout>           _bloomOptions;
   Graphic& _graphic;
 
 
@@ -47,4 +42,7 @@ private:
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setBloomDirections;
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setBloomIntensity ;
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setBloomSize      ;
+  std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setRenderer;
+  std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _getRenderer;
+  std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _getAllRenderer;
 };
