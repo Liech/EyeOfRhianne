@@ -1,57 +1,55 @@
-#include "SkyBoxSelection.h"
+#include "SkyBoxMenuItem.h"
 
 #include <filesystem>
 #include <regex>
-#include "ListSelection.h"
+#include <imgui.h>
 
+#include "AthanahCommonLib/SupCom/Gamedata/SkyboxFactory.h"
 #include "AhwassaGraphicsLib/Core/Window.h"
 #include "AhwassaGraphicsLib/Uniforms/CubeTexture.h"
 #include "AthanahCommonLib/SkyBox.h"
 #include "AezeselFileIOLib/ImageIO.h"
 #include "HaasScriptingLib/ScriptEngine.h"
 
+#include "Graphic.h"
 
-SkyBoxSelection::SkyBoxSelection(Athanah::SkyboxFactory& factory,Iyathuum::glmAABB<2> area, Graphic& graphic) : _graphic(graphic), _factory(factory){
+SkyBoxMenuItem::SkyBoxMenuItem(Athanah::SkyboxFactory& factory, Graphic& graphic) : _graphic(graphic), _factory(factory){
 
   std::string skyFile = "DefaultEnvCube.dds";  
-  std::vector<std::string> skies     = factory.getBoxes();
-  std::vector<std::string> niceNames = factory.getNames();
 
-  _list = std::make_unique<ListSelection>(skies,niceNames, area, _graphic.getWindow(), [this](std::string newSky) {
-    setSkyBox(newSky);
-  });
-  _list->setVisible(false);
-
-  if (skies.size() > 2) { 
-    setSkyBox(skies[2]);
+  _allSkyboxes = factory.getBoxes();
+  if (_allSkyboxes.size() > 2) {
+    setSkyBox(_allSkyboxes[2]);
   }
-  _allSkyboxes = skies;
+
+  for (auto& x : _allSkyboxes)
+    _allNiceNames.push_back(factory.getName(x));
+
   initScript();
 }
 
-void SkyBoxSelection::setSkyBox(std::string newSky) {
+void SkyBoxMenuItem::setSkyBox(std::string newSky) {
   _graphic._skyBox = _factory.load(newSky, _graphic.getWindow()->camera());
   _graphic._reflectionTexture = _factory.loadReflectionCube(newSky);
   _currentSkybox = newSky;
 }
 
-void SkyBoxSelection::update() {
+void SkyBoxMenuItem::update() {
   
 }
 
-void SkyBoxSelection::draw() {
-  _list->draw();
+void SkyBoxMenuItem::menu() {
+  if (ImGui::TreeNode("Skybox")) {
+    for (size_t i = 0; i < _allSkyboxes.size(); i++) {
+      if (ImGui::Button(_allNiceNames[i].c_str())) {
+        setSkyBox(_allSkyboxes[i]);
+      }
+    }
+    ImGui::TreePop();
+  }
 }
 
-void SkyBoxSelection::setVisible(bool value) {
-  _list->setVisible(value);
-}
-
-bool SkyBoxSelection::isVisible() {
-  return _list->isVisible();
-}
-
-void SkyBoxSelection::initScript() {
+void SkyBoxMenuItem::initScript() {
   _setSkyBox = std::make_shared< std::function<nlohmann::json(const nlohmann::json&)>>(
     [&](const nlohmann::json& input) -> nlohmann::json
   {

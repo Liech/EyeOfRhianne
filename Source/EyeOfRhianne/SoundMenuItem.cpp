@@ -1,4 +1,4 @@
-#include "SoundSelection.h"
+#include "SoundMenuItem.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <filesystem>
@@ -9,16 +9,16 @@
 
 #include "Graphic.h"
 
-SoundSelection::SoundSelection(std::string soundPath, Graphic& graphic) : _graphic(graphic) {
+SoundMenuItem::SoundMenuItem(std::string soundPath, Graphic& graphic) : _graphic(graphic) {
   _factory     = std::make_shared<Aezesel::SoundFactory>(soundPath);
   _soundEngine = std::make_shared<Ahwassa::SoundEngine>();
 }
 
-void SoundSelection::update() {
+void SoundMenuItem::update() {
 
 }
 
-void SoundSelection::menu() {
+void SoundMenuItem::menu() {
   if (ImGui::TreeNode("Sounds")) {
     for (auto bank : _factory->getAllBanks()) {
       if (ImGui::TreeNode(bank.c_str())) {

@@ -18,10 +18,9 @@ set(Header_Files
     "Source/EyeOfRhianne/MapSelection.h"
     "Source/EyeOfRhianne/RendererSelection.h"
     "Source/EyeOfRhianne/ScriptSelection.h"
-    "Source/EyeOfRhianne/SkyBoxSelection.h"
-    "Source/EyeOfRhianne/SoundSelection.h"
-    "Source/EyeOfRhianne/UnitModelSelection.h"
-    "Source/EyeOfRhianne/AnimationControlDialog.h"
+    "Source/EyeOfRhianne/SkyBoxMenuItem.h"
+    "Source/EyeOfRhianne/SoundMenuItem.h"
+    "Source/EyeOfRhianne/UnitMenuItem.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
@@ -35,10 +34,9 @@ set(Source_Files
     "Source/EyeOfRhianne/MapSelection.cpp"
     "Source/EyeOfRhianne/RendererSelection.cpp"
     "Source/EyeOfRhianne/ScriptSelection.cpp"
-    "Source/EyeOfRhianne/SkyBoxSelection.cpp"
-    "Source/EyeOfRhianne/SoundSelection.cpp"
-    "Source/EyeOfRhianne/UnitModelSelection.cpp"
-    "Source/EyeOfRhianne/AnimationControlDialog.cpp"
+    "Source/EyeOfRhianne/SkyBoxMenuItem.cpp"
+    "Source/EyeOfRhianne/SoundMenuItem.cpp"
+    "Source/EyeOfRhianne/UnitMenuItem.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})
 

@@ -18,9 +18,9 @@ namespace Aezesel {
   class SoundFactory;
 }
 
-class SoundSelection {
+class SoundMenuItem {
 public:
-  SoundSelection(std::string soundPath, Graphic&);
+  SoundMenuItem(std::string soundPath, Graphic&);
 
   void update();
   void menu();

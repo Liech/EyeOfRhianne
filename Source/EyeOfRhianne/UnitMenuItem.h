@@ -19,10 +19,10 @@ namespace Athanah {
 
 class Graphic;
 
-class UnitModelSelection {
+class UnitMenuItem {
 public:
-  UnitModelSelection(Athanah::Gamedata& gamedata, Graphic&);
-  virtual ~UnitModelSelection() = default;
+  UnitMenuItem(Athanah::Gamedata& gamedata, Graphic&);
+  virtual ~UnitMenuItem() = default;
 
   void menu();
   void update();

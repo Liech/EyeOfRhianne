@@ -1,4 +1,4 @@
-#include "UnitModelSelection.h"
+#include "UnitMenuItem.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
@@ -19,7 +19,7 @@
 
 #include "Graphic.h"
 
-UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, Graphic& graphic) : 
+UnitMenuItem::UnitMenuItem(Athanah::Gamedata& gamedata, Graphic& graphic) : 
   _graphic(graphic),
   _gamedata(gamedata)
 {
@@ -29,14 +29,14 @@ UnitModelSelection::UnitModelSelection(Athanah::Gamedata& gamedata, Graphic& gra
   initScript();
 }
 
-void UnitModelSelection::setModel(std::string newModel) {
+void UnitMenuItem::setModel(std::string newModel) {
   _currentID = newModel;
   _graphic.setModel(getCurrentModel());
   float scale = _gamedata.blueprint().loadModel(_currentID)->display().scale() * 30;
   _graphic._mesh->transformation = glm::scale(glm::mat4(1), glm::vec3(scale, scale, scale));
 }
 
-std::shared_ptr<Ahwassa::Texture> UnitModelSelection::getFactionIcon(const std::string& s) {
+std::shared_ptr<Ahwassa::Texture> UnitMenuItem::getFactionIcon(const std::string& s) {
   if (s == "UEF")
     return _gamedata.icon().getFactionIcon(Athanah::Faction::Uef, Athanah::FactionIconType::Normal);
   else if (s == "Cybran")
@@ -50,15 +50,15 @@ std::shared_ptr<Ahwassa::Texture> UnitModelSelection::getFactionIcon(const std::
   return _gamedata.icon().getTierIcons(Athanah::Faction::Uef,Athanah::TechLevel::T4);
 }
 
-std::shared_ptr<Athanah::SupComModel> UnitModelSelection::getCurrentModel() {
+std::shared_ptr<Athanah::SupComModel> UnitMenuItem::getCurrentModel() {
   return _gamedata.model().loadModel(_currentID);
 }
 
-void UnitModelSelection::update() {
+void UnitMenuItem::update() {
 
 }
 
-void UnitModelSelection::menu() {
+void UnitMenuItem::menu() {
   ImGuiIO& io = ImGui::GetIO();
   if (ImGui::TreeNode("Model"))
   {
@@ -76,7 +76,7 @@ void UnitModelSelection::menu() {
   }
 }
 
-void UnitModelSelection::unitMenuItem(const std::string& unitName) {
+void UnitMenuItem::unitMenuItem(const std::string& unitName) {
   ImGuiIO& io = ImGui::GetIO();
   auto bp = _gamedata.blueprint().loadModel(unitName);
   ImTextureID strategicIcon = (ImTextureID)_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
@@ -118,6 +118,15 @@ void UnitModelSelection::unitMenuItem(const std::string& unitName) {
           }
           if (ImGui::Button("Animate"))
             ImGui::OpenPopup("Chose Animation");
+          if (_graphic._currentAnimation != "None") {
+            ImGui::SameLine();
+            if (_graphic._playAnimation && ImGui::Button("Pause")) {
+              _graphic._playAnimation = false;
+            }
+            else if (!_graphic._playAnimation && ImGui::Button("Play")) {
+              _graphic._playAnimation = true;
+            }
+          }
         }
         if (ImGui::Button("Export")) {
           save();
@@ -128,7 +137,7 @@ void UnitModelSelection::unitMenuItem(const std::string& unitName) {
   }
 }
 
-std::vector<std::string> UnitModelSelection::getNames(const std::string& category) {
+std::vector<std::string> UnitMenuItem::getNames(const std::string& category) {
   std::vector<std::string> result;
 
   for (auto x : _gamedata.model().getAvailableModels()) {
@@ -150,7 +159,7 @@ std::vector<std::string> UnitModelSelection::getNames(const std::string& categor
   return result;
 }
 
-void UnitModelSelection::initScript() {
+void UnitMenuItem::initScript() {
   _setUnit = std::make_shared< std::function<nlohmann::json(const nlohmann::json&)>>(
     [&](const nlohmann::json& input) -> nlohmann::json
   {
@@ -192,7 +201,7 @@ void UnitModelSelection::initScript() {
   _graphic._scripts->registerFunction("eyeSetUnitColor", _setUnitColor);
 }
 
-void UnitModelSelection::save() {
+void UnitMenuItem::save() {
   std::vector<glm::vec3> data;
   data.resize(_graphic._model->scm().indices.size() * 3);
   auto anim = _graphic.getAnimation();

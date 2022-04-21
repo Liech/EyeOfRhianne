@@ -14,15 +14,14 @@ namespace Athanah {
   class Gamedata;
 }
 
-class UnitModelSelection;
-class SkyBoxSelection;
+class UnitMenuItem;
+class SkyBoxMenuItem;
 class ListSelection;
 class RendererSelection;
 class MapSelection;
 class ScriptSelection;
-class SoundSelection;
+class SoundMenuItem;
 class Graphic;
-class AnimationControlDialog;
 
 class AssetSelection {
 public:
@@ -44,10 +43,9 @@ private:
   std::shared_ptr<MapSelection       > _maps      ;
   std::shared_ptr<ScriptSelection    > _scripts   ;
 
-  std::unique_ptr<UnitModelSelection >    _units;
-  std::unique_ptr<AnimationControlDialog> _animationControl;
-  std::unique_ptr<SoundSelection>         _sounds;
-  std::unique_ptr<SkyBoxSelection    >    _skyBox;
+  std::unique_ptr<UnitMenuItem >    _units;
+  std::unique_ptr<SoundMenuItem>         _sounds;
+  std::unique_ptr<SkyBoxMenuItem    >    _skyBox;
 
   EyeOfRhianneConfiguration& _config;
 };
