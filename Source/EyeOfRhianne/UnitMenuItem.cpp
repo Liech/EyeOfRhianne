@@ -13,6 +13,7 @@
 #include <AthanahCommonLib/SupCom/Blueprint/BlueprintGeneral.h>
 #include <AthanahCommonLib/SupCom/Blueprint/BlueprintDisplay.h>
 #include <AhwassaGraphicsLib/Core/Window.h>
+#include <AhwassaGraphicsLib/Core/Camera.h>
 #include <AhwassaGraphicsLib/Uniforms/Texture.h>
 #include <HaasScriptingLib/ScriptEngine.h>
 #include <AezeselFileIOLib/STLWriter.h>
@@ -34,6 +35,8 @@ void UnitMenuItem::setModel(std::string newModel) {
   _graphic.setModel(getCurrentModel());
   float scale = _gamedata.blueprint().loadModel(_currentID)->display().scale() * 30;
   _graphic._mesh->transformation = glm::scale(glm::mat4(1), glm::vec3(scale, scale, scale));
+  auto aabb = getCurrentModel()->scm().aabb;
+  _graphic.getWindow()->camera()->moveTo(aabb.getCenter() * scale);
 }
 
 std::shared_ptr<Ahwassa::Texture> UnitMenuItem::getFactionIcon(const std::string& s) {

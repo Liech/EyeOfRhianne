@@ -54,6 +54,10 @@ void Graphic::draw() {
 }
 
 void Graphic::drawScene() {
+  _composer->setAmbient(_ambientValue);
+  _composer->setDiffuse(_diffuseValue);
+  _composer->setSpecular(_specularValue);
+
   _composer->start();
   if (_skyBox)
     _skyBox->draw();

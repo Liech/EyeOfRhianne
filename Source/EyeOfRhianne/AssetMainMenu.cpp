@@ -39,7 +39,7 @@ void AssetMainMenu::addDialogs() {
   _units            = std::make_unique<UnitMenuItem>    (*_gamedata, _graphic);
   _skyBox           = std::make_unique<SkyBoxMenuItem>  (_gamedata->skybox(), _graphic);
   _graphicOptions   = std::make_unique<GraphicOptionsMenuItem>(_graphic);
-  //_maps       = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",area,_graphic, *_gamedata);
+  _maps             = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",_graphic, *_gamedata);
   //_scripts    = std::make_shared<ScriptSelection>    (area,_graphic);
   _sounds     = std::make_unique<SoundMenuItem >    (_config.SupComPath + "\\sounds",_graphic);
 }
@@ -50,6 +50,7 @@ void AssetMainMenu::menu() {
   ImGui::Begin("Assets",0, ImGuiWindowFlags_NoMove );
   _units->menu();
   _skyBox->menu();
+  _maps->menu();
   _sounds->menu();  
   optionsMenu();
   ImGui::End();
@@ -71,7 +72,7 @@ void AssetMainMenu::update() {
   _units ->update();
   _sounds->update();
   _skyBox->update();
-  //_maps      ->update();
+  _maps  ->update();
   //_scripts   ->update();
 }
 

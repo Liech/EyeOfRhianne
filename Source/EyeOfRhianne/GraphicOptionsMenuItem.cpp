@@ -32,7 +32,7 @@ void GraphicOptionsMenuItem::makeBloomOptions() {
     _graphic._bloom->setSize(size);
 
     int direction = _graphic._bloom->directions();
-    ImGui::SliderInt("Directions", &direction, 0, 100);
+    ImGui::SliderInt("Directions", &direction, 15, 100);
     _graphic._bloom->setDirections(direction);
 
     float intensity = _graphic._bloom->intensity();
@@ -49,12 +49,16 @@ void GraphicOptionsMenuItem::makeBloomOptions() {
 
 void GraphicOptionsMenuItem::makeRendererOptions() {
   if (ImGui::TreeNode("Renderer")) {
+    ImGui::SliderFloat("Ambient" , &_graphic._ambientValue , 0.0f, 3.0f);
+    ImGui::SliderFloat("Diffuse" , &_graphic._diffuseValue , 0.0f, 3.0f);
+    ImGui::SliderFloat("Specular", &_graphic._specularValue, 0.0f, 3.0f);
 
     int radioButtonChoice = _graphic._renderedTexture;
     for (int i = 0; i < _graphic._textures.size(); i++) {
       ImGui::RadioButton(_graphic._textures[i]->getName().c_str(), &radioButtonChoice,i);
     }
     _graphic._renderedTexture = radioButtonChoice;
+
 
     ImGui::TreePop();
   }

@@ -5,14 +5,9 @@
 #include <memory>
 #include <map>
 #include <vector>
-#include "IyathuumCoreLib/BaseTypes/glmAABB.h"
 #include "Graphic.h"
 
-class ListSelection;
-
 namespace Ahwassa {
-  class Button;
-  class Texture;
   class Window;
 }
 namespace Aezesel {
@@ -27,19 +22,15 @@ namespace Athanah {
 
 class MapSelection {
 public:
-  MapSelection(std::string mapPath, Iyathuum::glmAABB<2> area, Graphic&, Athanah::Gamedata&);
+  MapSelection(std::string mapPath, Graphic&, Athanah::Gamedata&);
 
   void update();
-  void draw();
-
-  void setVisible(bool value);
-  bool isVisible();
+  void menu();
 
 private:
-  Athanah::Gamedata& _gamedata;
-                                      
-  std::shared_ptr<Athanah::MapFactory> _factory;
-  Graphic&                             _graphic;
-  std::unique_ptr<ListSelection  >     _list = nullptr;
-  Iyathuum::glmAABB<2>                 _area   ;
+  void setMap(std::shared_ptr<Athanah::Map>);
+
+  Athanah::Gamedata&                   _gamedata;
+  std::shared_ptr<Athanah::MapFactory> _factory ;
+  Graphic&                             _graphic ;
 };

@@ -43,6 +43,10 @@ public:
   float                                 _time = 0;
   std::string                           _currentAnimation = "None";
 
+  float _ambientValue = 1;
+  float _specularValue = 1;
+  float _diffuseValue = 1;
+
   std::vector<std::shared_ptr<Ahwassa::Texture>>    _textures;
   std::shared_ptr<Athanah::SupComMeshRendererDef>   _renderer;
   std::shared_ptr<Ahwassa::Bloom>                   _bloom;
