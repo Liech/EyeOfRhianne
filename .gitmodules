@@ -1,4 +1,3 @@
 [submodule "Yathsou"]
 	path = Yathsou
 	url = https://github.com/Liech/Yathsou.git
-	branch = libOnly
