@@ -53,9 +53,9 @@ void AssetMainMenu::menu() {
   _maps->menu();
   _sounds->menu();  
   optionsMenu();
-  ImGui::End();
   if (_showImguiDemo)
     ImGui::ShowDemoWindow();
+  ImGui::End();
 
   //_maps      ->draw();
   //_scripts   ->draw();
@@ -65,6 +65,7 @@ void AssetMainMenu::optionsMenu() {
   if (ImGui::TreeNode("Options")) {
     _graphicOptions->menu();
     ImGui::Checkbox("Show IMGUI Demo Window", &_showImguiDemo);
+    ImGui::TreePop();
   }
 }
 

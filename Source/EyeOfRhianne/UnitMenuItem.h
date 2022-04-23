@@ -5,10 +5,12 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <set>
 #include <functional>
+#include <nlohmann/json.hpp>
+
 #include "AthanahCommonLib/SupCom/SupComEnums.h"
 #include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
-#include <nlohmann/json.hpp>
 
 namespace Ahwassa {
   class Texture;
@@ -34,6 +36,8 @@ public:
 private:
   const std::vector<std::string> _categories = std::vector<std::string>{ "UEF","Cybran","Aeon","Seraphim","Other","NonUnit" };
 
+  void factionTechNode(Athanah::TechLevel, Athanah::Faction);
+  void listItemsOfCategory(const std::set<Athanah::UnitCategory>&);
   void unitMenuItem(const std::string& unitName);
   void initScript();
   void setModel(std::string id);
@@ -44,6 +48,7 @@ private:
   Athanah::Gamedata&                              _gamedata       ;
   std::string                                     _currentID = "" ;
   std::map<std::string, std::vector<std::string>> _names;
+  std::set<Athanah::UnitCategory>                 _currentSearch;
 
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setUnit;
   std::shared_ptr<std::function<nlohmann::json(const nlohmann::json&)>> _setUnitColor;

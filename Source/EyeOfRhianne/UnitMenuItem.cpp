@@ -50,7 +50,7 @@ std::shared_ptr<Ahwassa::Texture> UnitMenuItem::getFactionIcon(const std::string
     return _gamedata.icon().getFactionIcon(Athanah::Faction::Seraphim, Athanah::FactionIconType::Normal);
   else if (s == "Other")
     return _gamedata.icon().getFactionIcon(Athanah::Faction::Undefined, Athanah::FactionIconType::Normal);
-  return _gamedata.icon().getTierIcons(Athanah::Faction::Uef,Athanah::TechLevel::T4);
+  return _gamedata.icon().getFactionIcon(Athanah::Faction::Undefined, Athanah::FactionIconType::Normal);
 }
 
 std::shared_ptr<Athanah::SupComModel> UnitMenuItem::getCurrentModel() {
@@ -63,19 +63,130 @@ void UnitMenuItem::update() {
 
 void UnitMenuItem::menu() {
   ImGuiIO& io = ImGui::GetIO();
-  if (ImGui::TreeNode("Model"))
-  {
-      for (auto& cat : _categories) {
-          ImGui::Image((ImTextureID)getFactionIcon(cat)->getTextureID(), ImVec2(20* io.FontGlobalScale, 20* io.FontGlobalScale));
-          ImGui::SameLine();
-          if (ImGui::TreeNode(cat.c_str())) {
-              for (auto& name : _names[cat]) {
-                  unitMenuItem(name);
-              }
-              ImGui::TreePop();
-          }
-      }
+  if (ImGui::TreeNode("Model")) {
+    //for (auto& cat : _categories) {
+    //    ImGui::Image((ImTextureID)getFactionIcon(cat)->getTextureID(), ImVec2(20* io.FontGlobalScale, 20* io.FontGlobalScale));
+    //    ImGui::SameLine();
+    //    if (ImGui::TreeNode(cat.c_str())) {
+    //        for (auto& name : _names[cat]) {
+    //            unitMenuItem(name);
+    //        }
+    //        ImGui::TreePop();
+    //    }
+    //}
+
+    ImGui::Image((ImTextureID)getFactionIcon("UEF")->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    ImGui::SameLine();
+    if (ImGui::TreeNode("UEF")) {
+      factionTechNode(Athanah::TechLevel::T1, Athanah::Faction::Uef);
+      factionTechNode(Athanah::TechLevel::T2, Athanah::Faction::Uef);
+      factionTechNode(Athanah::TechLevel::T3, Athanah::Faction::Uef);
+      factionTechNode(Athanah::TechLevel::T4, Athanah::Faction::Uef);
       ImGui::TreePop();
+    }
+
+    ImGui::Image((ImTextureID)getFactionIcon("Cybran")->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    ImGui::SameLine();
+    if (ImGui::TreeNode("Cybran")) {
+      factionTechNode(Athanah::TechLevel::T1, Athanah::Faction::Cybran);
+      factionTechNode(Athanah::TechLevel::T2, Athanah::Faction::Cybran);
+      factionTechNode(Athanah::TechLevel::T3, Athanah::Faction::Cybran);
+      factionTechNode(Athanah::TechLevel::T4, Athanah::Faction::Cybran);
+      ImGui::TreePop();
+    }
+
+    ImGui::Image((ImTextureID)getFactionIcon("Aeon")->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    ImGui::SameLine();
+    if (ImGui::TreeNode("Aeon")) {
+      factionTechNode(Athanah::TechLevel::T1, Athanah::Faction::Aeon);
+      factionTechNode(Athanah::TechLevel::T2, Athanah::Faction::Aeon);
+      factionTechNode(Athanah::TechLevel::T3, Athanah::Faction::Aeon);
+      factionTechNode(Athanah::TechLevel::T4, Athanah::Faction::Aeon);
+      ImGui::TreePop();
+    }
+
+    ImGui::Image((ImTextureID)getFactionIcon("Seraphim")->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+    ImGui::SameLine();
+    if (ImGui::TreeNode("Seraphim")) {
+      factionTechNode(Athanah::TechLevel::T1, Athanah::Faction::Seraphim);
+      factionTechNode(Athanah::TechLevel::T2, Athanah::Faction::Seraphim);
+      factionTechNode(Athanah::TechLevel::T3, Athanah::Faction::Seraphim);
+      factionTechNode(Athanah::TechLevel::T4, Athanah::Faction::Seraphim);
+      ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Search")) {
+      
+      if (ImGui::BeginPopupContextItem("DefineCategories")) {
+        for (auto x : Athanah::allUnitCategories()) {
+          bool checked = _currentSearch.contains(x);
+          ImGui::Checkbox(unitCategory2niceString(x).c_str(), &checked);
+          if (_currentSearch.contains(x)) {
+            if (!checked)
+              _currentSearch.erase(x);
+          }
+          else {
+            if (checked)
+              _currentSearch.insert(x);
+          }            
+        }
+        ImGui::EndPopup();
+      }
+      if (ImGui::Button("Define Categories"))
+        ImGui::OpenPopup("DefineCategories");
+
+      listItemsOfCategory(_currentSearch);
+      ImGui::TreePop();
+    }
+
+    ImGui::TreePop();
+  }
+}
+
+void UnitMenuItem::factionTechNode(Athanah::TechLevel lvl, Athanah::Faction faction) {
+  ImGuiIO& io = ImGui::GetIO();
+
+  Athanah::UnitCategory cat;
+  std::string name;
+  if (lvl == Athanah::TechLevel::T1) {
+    name = "T1";
+    cat = Athanah::UnitCategory::Tech1;
+  }
+  if (lvl == Athanah::TechLevel::T2) {
+    name = "T2";
+    cat = Athanah::UnitCategory::Tech2;
+  }
+  if (lvl == Athanah::TechLevel::T3) {
+    name = "T3";
+    cat = Athanah::UnitCategory::Tech3;
+  }
+  if (lvl == Athanah::TechLevel::T4) {
+    name = "T4";
+    cat = Athanah::UnitCategory::Experimental;
+  }
+  Athanah::UnitCategory facCat;
+  if (faction == Athanah::Faction::Aeon)
+    facCat = Athanah::UnitCategory::Aeon;
+  if (faction == Athanah::Faction::Cybran)
+    facCat = Athanah::UnitCategory::Cybran;
+  if (faction == Athanah::Faction::Seraphim)
+    facCat = Athanah::UnitCategory::Seraphim;
+  if (faction == Athanah::Faction::Uef)
+    facCat = Athanah::UnitCategory::UEF;
+
+  ImTextureID icon = (ImTextureID)_gamedata.icon().getTierIcon(faction, lvl, Athanah::SelectableButtonStatus::Normal)->getTextureID();
+  ImGui::Image(icon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+  ImGui::SameLine();
+  if (ImGui::TreeNode(name.c_str())) {
+    listItemsOfCategory({ facCat, cat });
+    ImGui::TreePop();
+  }
+}
+
+void UnitMenuItem::listItemsOfCategory(const std::set<Athanah::UnitCategory>& filter) {
+  for (auto& unit : _gamedata.blueprint().getModelsByCategory(filter)) {
+    unitMenuItem(unit);
+    //ImGui::Text(unit.c_str());
   }
 }
 
@@ -83,6 +194,7 @@ void UnitMenuItem::unitMenuItem(const std::string& unitName) {
   ImGuiIO& io = ImGui::GetIO();
   auto bp = _gamedata.blueprint().loadModel(unitName);
   ImTextureID strategicIcon = (ImTextureID)_gamedata.icon().getStrategicIcon(bp->strategicIcon(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
+  ImTextureID techIcon = (ImTextureID)_gamedata.icon().getTierIcon(bp->general().faction(),bp->techLevel(), Athanah::SelectableButtonStatus::Normal)->getTextureID();
 
   ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
   ImGui::SameLine();
@@ -100,6 +212,8 @@ void UnitMenuItem::unitMenuItem(const std::string& unitName) {
       ImGui::BeginGroup();
       ImGui::Text(("ID: " + unitName).c_str());
       ImGui::Image((ImTextureID)_gamedata.icon().getFactionIcon(bp->general().faction(), Athanah::FactionIconType::Normal)->getTextureID(), ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
+      ImGui::SameLine();
+      ImGui::Image(techIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
       ImGui::SameLine();
       ImGui::Image(strategicIcon, ImVec2(20 * io.FontGlobalScale, 20 * io.FontGlobalScale));
 
