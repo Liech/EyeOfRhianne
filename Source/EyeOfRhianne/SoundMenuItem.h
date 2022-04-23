@@ -20,14 +20,11 @@ namespace Aezesel {
 
 class SoundMenuItem {
 public:
-  SoundMenuItem(std::string soundPath, Graphic&);
+  SoundMenuItem(Graphic&);
 
   void update();
   void menu();
 private:
                                       
   Graphic&                               _graphic;
-  std::shared_ptr<Aezesel::SoundFactory> _factory;
-  std::shared_ptr<Ahwassa::SoundEngine > _soundEngine;
-  std::shared_ptr<Ahwassa::SoundHandler> _currentHandler = nullptr;
 };

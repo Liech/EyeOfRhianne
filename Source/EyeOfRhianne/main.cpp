@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     w.camera()->setPosition(glm::vec3(20, 20, 20));
     w.input().addUIElement(arcCam.get(), 1);
 
-    graphic    = std::make_unique<Graphic               >(&w);
+    graphic    = std::make_unique<Graphic               >(&w,config.SupComPath + "\\sounds");
     assets     = std::make_unique<AssetMainMenu        >(config, *graphic);
     fps        = std::make_unique<Ahwassa::FPS          >(&w);
     ui         = std::make_unique<Ahwassa::IMGUIRenderer>(&w);

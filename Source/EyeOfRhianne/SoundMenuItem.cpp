@@ -5,13 +5,12 @@
 #include <imgui.h>
 
 #include <AhwassaGraphicsLib/sound/SoundEngine.h>
+#include <AhwassaGraphicsLib/sound/SoundHandler.h>
 #include <AezeselFileIOLib/Sound/SoundFactory.h>
 
 #include "Graphic.h"
 
-SoundMenuItem::SoundMenuItem(std::string soundPath, Graphic& graphic) : _graphic(graphic) {
-  _factory     = std::make_shared<Aezesel::SoundFactory>(soundPath);
-  _soundEngine = std::make_shared<Ahwassa::SoundEngine>();
+SoundMenuItem::SoundMenuItem(Graphic& graphic) : _graphic(graphic) {
 }
 
 void SoundMenuItem::update() {
@@ -20,12 +19,12 @@ void SoundMenuItem::update() {
 
 void SoundMenuItem::menu() {
   if (ImGui::TreeNode("Sounds")) {
-    for (auto bank : _factory->getAllBanks()) {
+    for (auto bank : _graphic._soundFactory->getAllBanks()) {
       if (ImGui::TreeNode(bank.c_str())) {
-        for (auto sound : _factory->getAllSoundsInBank(bank)) {
+        for (auto sound : _graphic._soundFactory->getAllSoundsInBank(bank)) {
           if (ImGui::Button(sound.c_str())) {
-            _currentHandler = _soundEngine->createHandler(*_factory->load(bank, sound));
-            _currentHandler->play();
+            _graphic._currentSoundHandler = _graphic._soundEngine->createHandler(*_graphic._soundFactory->load(bank, sound));
+            _graphic._currentSoundHandler->play();
           }
         }
         ImGui::TreePop();

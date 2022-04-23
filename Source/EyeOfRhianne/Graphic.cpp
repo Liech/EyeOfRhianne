@@ -14,7 +14,10 @@
 #include <AhwassaGraphicsLib/PostProcessing/CubeReflection.h>
 #include <AhwassaGraphicsLib/Renderer/BoxRenderer.h>
 #include <AhwassaGraphicsLib/Uniforms/Rendertarget.h>
+#include <AhwassaGraphicsLib/sound/SoundEngine.h>
+#include <AhwassaGraphicsLib/sound/SoundHandler.h>
 
+#include <AezeselFileIOLib/Sound/SoundFactory.h>
 #include <HaasScriptingLib/ScriptEngine.h>
 #include <AhwassaGraphicsLib/Renderer/BasicTexture2DRenderer.h>
 #include <AthanahCommonLib/SupCom/SupComMeshRendererDef.h>
@@ -22,7 +25,7 @@
 #include <AthanahCommonLib/SkyBox.h>
 #include <AthanahCommonLib/Map/MapRenderer.h>
 
-Graphic::Graphic(Ahwassa::Window* window) {
+Graphic::Graphic(Ahwassa::Window* window, const std::string& soundPath) {
   _window         = window;
   _scripts = std::make_shared<Haas::ScriptEngine>();
   _composer       = std::make_shared<Ahwassa::DeferredComposer     >(_window, _window->getResolution());
@@ -37,6 +40,8 @@ Graphic::Graphic(Ahwassa::Window* window) {
   for (auto x : _composer->getRawTextures())
     _textures.push_back(x);
   _textures.push_back(_composer->getDepth());
+  _soundFactory = std::make_shared<Aezesel::SoundFactory>(soundPath);
+  _soundEngine = std::make_shared<Ahwassa::SoundEngine>();
 }
 
 void Graphic::update() {

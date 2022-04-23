@@ -41,7 +41,7 @@ void AssetMainMenu::addDialogs() {
   _graphicOptions   = std::make_unique<GraphicOptionsMenuItem>(_graphic);
   _maps             = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",_graphic, *_gamedata);
   //_scripts    = std::make_shared<ScriptSelection>    (area,_graphic);
-  _sounds     = std::make_unique<SoundMenuItem >    (_config.SupComPath + "\\sounds",_graphic);
+  _sounds     = std::make_unique<SoundMenuItem >    (_graphic);
 }
 
 void AssetMainMenu::menu() {

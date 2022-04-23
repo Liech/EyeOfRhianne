@@ -16,18 +16,27 @@ namespace Ahwassa {
   class AdditiveComposer;
   class BoxRenderer;
   struct DiffuseMeshRendererMesh;
+  class SoundEngine;
+  class SoundHandler;
 }
+
+namespace Aezesel {
+  class SoundFactory;
+}
+
 namespace Athanah {
   class SkyBox;
   class Map;
   class MapRenderer;
 }
+
 namespace Haas {
   class ScriptEngine;
 }
+
 class Graphic {
 public:
-  Graphic(Ahwassa::Window*);
+  Graphic(Ahwassa::Window*, const std::string& soundPath);
 
   void update();
   void draw();
@@ -58,6 +67,9 @@ public:
   std::shared_ptr<Haas::ScriptEngine>               _scripts;
   std::shared_ptr<Ahwassa::IMesh>                   _mapMesh = nullptr;
   std::shared_ptr<Athanah::MapRenderer>             _mapRenderer = nullptr;
+  std::shared_ptr<Aezesel::SoundFactory>            _soundFactory;
+  std::shared_ptr<Ahwassa::SoundEngine >            _soundEngine;
+  std::shared_ptr<Ahwassa::SoundHandler>            _currentSoundHandler = nullptr;
   Ahwassa::Window* getWindow();
 private:
   void drawScene();

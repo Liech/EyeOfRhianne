@@ -12,11 +12,15 @@
 #include <AthanahCommonLib/SupCom/Blueprint/Blueprint.h>
 #include <AthanahCommonLib/SupCom/Blueprint/BlueprintGeneral.h>
 #include <AthanahCommonLib/SupCom/Blueprint/BlueprintDisplay.h>
+#include <AthanahCommonLib/SupCom/Blueprint/BlueprintSound.h>
 #include <AhwassaGraphicsLib/Core/Window.h>
 #include <AhwassaGraphicsLib/Core/Camera.h>
 #include <AhwassaGraphicsLib/Uniforms/Texture.h>
+#include <AhwassaGraphicsLib/sound/SoundEngine.h>
+#include <AhwassaGraphicsLib/sound/SoundHandler.h>
 #include <HaasScriptingLib/ScriptEngine.h>
 #include <AezeselFileIOLib/STLWriter.h>
+#include <AezeselFileIOLib/Sound/SoundFactory.h>
 
 #include "Graphic.h"
 
@@ -118,9 +122,9 @@ void UnitMenuItem::menu() {
     if (ImGui::TreeNode("Search")) {
       
       if (ImGui::BeginPopupContextItem("DefineCategories")) {
-        for (auto x : Athanah::allUnitCategories()) {
+        for (auto x : Athanah::EnumConvert::allUnitCategories()) {
           bool checked = _currentSearch.contains(x);
-          ImGui::Checkbox(unitCategory2niceString(x).c_str(), &checked);
+          ImGui::Checkbox(Athanah::EnumConvert::unitCategory2niceString(x).c_str(), &checked);
           if (_currentSearch.contains(x)) {
             if (!checked)
               _currentSearch.erase(x);
@@ -248,6 +252,28 @@ void UnitMenuItem::unitMenuItem(const std::string& unitName) {
         if (ImGui::Button("Export")) {
           save();
         }
+      }
+
+      if (ImGui::BeginPopupContextItem(("UnitSound##" + unitName).c_str())) {
+        for (auto& x : bp->allSounds()) {
+          Athanah::BlueprintSound sound = bp->sound(x);
+          if (_graphic._soundFactory->hasSound(sound.bank(), sound.name())) {
+            if (ImGui::Button(x.c_str())) {
+              _graphic._currentSoundHandler = _graphic._soundEngine->createHandler(*_graphic._soundFactory->load(sound.bank(), sound.name()));
+              _graphic._currentSoundHandler->play();
+            }            
+          }
+          else
+            ImGui::Text((x + " not found").c_str());
+          ImGui::SameLine();
+          ImGui::Text(sound.bank().c_str());
+          ImGui::SameLine();
+          ImGui::Text(sound.name().c_str());
+        }
+        ImGui::EndPopup();
+      }
+      if (bp->allSounds().size() > 0 && ImGui::Button(("Sound##" + unitName).c_str())) {
+        ImGui::OpenPopup(("UnitSound##" + unitName).c_str());
       }
       ImGui::EndGroup();
     }
