@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
   std::shared_ptr<Ahwassa::ArcBallCamera> arcCam;
   w.Startup = [&]() {
-    arcCam = std::make_shared<Ahwassa::ArcBallCamera>(w.camera(), w.input(), Iyathuum::Key::MOUSE_BUTTON_1);
+    arcCam = std::make_shared<Ahwassa::ArcBallCamera>(w.camera(), w.input());
     w.camera()->setPosition(glm::vec3(20, 20, 20));
     w.input().addUIElement(arcCam.get(), 1);
 
