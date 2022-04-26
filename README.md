@@ -4,7 +4,7 @@ Supreme Commander Asset Explorer
 
 # Showcase
 
-Eye Of Rhianne is an interactive asset explorer for supreme commander 1. It is a byproduct on the journey to the full rts game.
+Eye Of Rhianne is an interactive asset explorer for supreme commander 1.
 
 [![Youtube Video](https://user-images.githubusercontent.com/16963076/119048618-c3cfce00-b9bf-11eb-8d46-f3d01e0454db.png)](https://youtu.be/8PbduxpR2ak "Youtube Video")
 
@@ -24,6 +24,7 @@ Eye Of Rhianne is an interactive asset explorer for supreme commander 1. It is a
  * Reflection is wrong
  * Seraphim are missing custom shaders 
  * Sounds inside a Sound bank are out of order and wrongly named
+ * Animations are wrong
 
 # Contribute
 
