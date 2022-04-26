@@ -37,6 +37,7 @@ namespace Haas {
 class Graphic {
 public:
   Graphic(Ahwassa::Window*, const std::string& soundPath);
+  virtual ~Graphic() = default;
 
   void update();
   void draw();

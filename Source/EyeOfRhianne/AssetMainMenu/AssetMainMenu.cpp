@@ -2,7 +2,6 @@
 
 #include "UnitMenuItem.h"
 #include "SkyBoxMenuItem.h"
-#include "ListSelection.h"
 #include "MapSelection.h"
 #include "SoundMenuItem.h"
 #include "ScriptSelection.h"
@@ -16,30 +15,19 @@
 #include "AhwassaGraphicsLib/Core/Window.h"
 #include "AhwassaGraphicsLib/Widgets/ListLayout.h"
 
+
 #include <imgui.h>
 
-AssetMainMenu::AssetMainMenu(EyeOfRhianneConfiguration& config, Graphic& graphic) : _graphic(graphic), _config(config){
-
-  if (config.UseSCD)
-  {
-      std::cout << "Hint: " << std::endl;
-      std::cout << "  Loading time can be speed up by extracting the SCFA gamedata content to the Data folder." << std::endl;
-      std::cout << "  Gamedata Path: " << config.SupComPath <<"/gamedata" << std::endl;
-      std::cout << "  Extract the SCD files (rename to .zip or use 7zip) as folders" << std::endl;
-      std::cout << "  At the end e.g. '" << config.AssetPath << "/" << "ambience' should exist" << std::endl;
-      std::cout << "  Finally change 'UseSCD' in 'Configuration.json' to false" << std::endl;
-  }
-  _gamedata = std::make_unique<Athanah::Gamedata>(config.SupComPath,config.UseSCD);
-
+AssetMainMenu::AssetMainMenu(EyeOfRhianneConfiguration& config, Graphic& graphic, Athanah::Gamedata& gamedata) : _graphic(graphic), _config(config), _gamedata(gamedata) {
   addDialogs();
 }  
 
 void AssetMainMenu::addDialogs() {
 
-  _units            = std::make_unique<UnitMenuItem>    (*_gamedata, _graphic);
-  _skyBox           = std::make_unique<SkyBoxMenuItem>  (_gamedata->skybox(), _graphic);
+  _units            = std::make_unique<UnitMenuItem>    (_gamedata, _graphic);
+  _skyBox           = std::make_unique<SkyBoxMenuItem>  (_gamedata.skybox(), _graphic);
   _graphicOptions   = std::make_unique<GraphicOptionsMenuItem>(_graphic);
-  _maps             = std::make_shared<MapSelection>       (_config.SupComPath+ "\\maps",_graphic, *_gamedata);
+  _maps             = std::make_shared<MapSelection>    (_config.SupComPath+ "\\maps",_graphic, _gamedata);
   //_scripts    = std::make_shared<ScriptSelection>    (area,_graphic);
   _sounds     = std::make_unique<SoundMenuItem >    (_graphic);
 }
@@ -61,6 +49,10 @@ void AssetMainMenu::menu() {
   //_scripts   ->draw();
 }
 
+void AssetMainMenu::draw() {
+
+}
+
 void AssetMainMenu::optionsMenu() {
   if (ImGui::TreeNode("Options")) {
     _graphicOptions->menu();
@@ -78,5 +70,5 @@ void AssetMainMenu::update() {
 }
 
 Athanah::Gamedata& AssetMainMenu::gamedata() {
-  return *_gamedata;
+  return _gamedata;
 }

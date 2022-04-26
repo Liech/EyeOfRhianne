@@ -16,8 +16,6 @@ namespace Ahwassa {
   class Bloom;
 }
 
-class ListSelection;
-
 class GraphicOptionsMenuItem {
 public:
   GraphicOptionsMenuItem(Graphic& graphic);

@@ -4,7 +4,8 @@
 #include <memory>
 #include "IyathuumCoreLib/BaseTypes/glmAABB.h"
 #include "Graphic.h"
-#include "EyeOfRhianneConfiguration.h"
+#include "EyeOfRhianne/EyeOfRhianneConfiguration.h"
+#include "EyeOfRhianne/EyeState.h"
 
 namespace Ahwassa {
   class Window;
@@ -25,20 +26,21 @@ class GraphicOptionsMenuItem;
 
 class AssetMainMenu {
 public:
-  AssetMainMenu(EyeOfRhianneConfiguration&, Graphic&);
+  AssetMainMenu(EyeOfRhianneConfiguration&, Graphic&, Athanah::Gamedata&);
   virtual ~AssetMainMenu() = default;
 
   void menu();
   void update();
+  void draw();
+
   Athanah::Gamedata& gamedata();
 private:
   void addDialogs();
   void optionsMenu();
 
   std::string                         _current;
-  std::unique_ptr<ListSelection>      _list;
   Graphic&                            _graphic;
-  std::unique_ptr<Athanah::Gamedata>  _gamedata;
+  Athanah::Gamedata&                  _gamedata;
 
   std::shared_ptr<MapSelection       > _maps      ;
   std::shared_ptr<ScriptSelection    > _scripts   ;

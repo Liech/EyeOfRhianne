@@ -1,37 +1,20 @@
 #include <iostream>
 #include <filesystem>
 #include <functional>
-
-#include "IyathuumCoreLib/Singleton/Database.h"
-
-#include "AhwassaGraphicsLib/Core/Window.h"
-#include "AhwassaGraphicsLib/Core/Camera.h"
-#include "AhwassaGraphicsLib/Drawables/FPS.h"
-#include "AhwassaGraphicsLib/Widgets/Button.h"
-#include "AhwassaGraphicsLib/Input/Input.h"
-#include "AhwassaGraphicsLib/Input/ArcBallCamera.h"
-#include "AhwassaGraphicsLib/Uniforms/Texture.h"
-
-#include "AthanahCommonLib/SupCom/SupComModel.h"
-#include "AthanahCommonLib/SupCom/Gamedata/Gamedata.h"
-#include "AthanahCommonLib/SupCom/Gamedata/SupComModelFactory.h"
-#include "AhwassaGraphicsLib/PostProcessing/Bloom.h"
-
-#include "AezeselFileIOLib/STLWriter.h"
-#include "AezeselFileIOLib/SupremeCommander/SCM.h"
-#include "AezeselFileIOLib/ImageIO.h"
-
-#include "ListSelection.h"
-
-#include "AssetMainMenu.h"
-#include "GraphicOptionsMenuItem.h"
-#include "Graphic.h"
-#include "EyeOfRhianneConfiguration.h"
-
-#include "AezeselFileIOLib/SupremeCommander/SCMAP.h"
-
 #include <imgui.h>
-#include "AhwassaGraphicsLib/Input/IMGUIRenderer.h"
+
+#include <IyathuumCoreLib/Singleton/Database.h>
+#include <IyathuumCoreLib/Util/StateMachine.h>
+#include <IyathuumCoreLib/Util/State.h>
+#include <IyathuumCoreLib/Util/StateTransition.h> 
+#include <AhwassaGraphicsLib/Core/Window.h>
+#include <AhwassaGraphicsLib/Input/IMGUIRenderer.h>
+#include <AthanahCommonLib/SupCom/Gamedata/Gamedata.h>
+
+#include "GamedataPicker.h"
+#include "EyeOfRhianneConfiguration.h"
+#include "EyeOfRhianne.h"
+#include "GamedataLoader.h"
 
 void enforceWorkingDir(std::string exeDir) {
   const size_t last_slash_idx = exeDir.find_last_of("\\/");
@@ -60,42 +43,70 @@ int main(int argc, char** argv) {
   int height = config.ScreenHeight;
 
   Ahwassa::Window w(glm::ivec2(width,height));
+  GamedataLoader loader(config);
+  EyeOfRhianne   eye(config, w);
 
-  std::unique_ptr<Ahwassa::FPS>           fps;
-  std::unique_ptr<AssetMainMenu>         assets;
-  std::unique_ptr<Graphic>                graphic;
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  std::shared_ptr<Iyathuum::State> startState = std::make_shared<Iyathuum::State>("Start");
+  Iyathuum::StateMachine state(startState);
+  std::map<std::shared_ptr<Iyathuum::State>, std::function<void()>> _updateMap;
+  std::map<std::shared_ptr<Iyathuum::State>, std::function<void()>> _drawMap;
+  std::map<std::shared_ptr<Iyathuum::State>, std::function<void()>> _menuMap;
+  _updateMap[startState] = [&]() { };
+  _drawMap  [startState] = [&]() { };
+  _menuMap  [startState] = [&]() { };
+
+  std::shared_ptr<Iyathuum::State> loaderState = std::make_shared<Iyathuum::State>("GameDataLoader");
+  loaderState->setOnEnterCallback([&]() { loader.start(); });
+  loaderState->setOnLeaveCallback([&]() { eye.setGamedata(loader.getGamedata()); });
+  _updateMap[loaderState] = [&]() { loader.update(); };
+  _drawMap  [loaderState] = [&]() { loader.draw();   };
+  _menuMap  [loaderState] = [&]() { loader.menu();   };
+  state.addState(loaderState);
+
+  std::shared_ptr<Iyathuum::State> eyeState = std::make_shared<Iyathuum::State>("EyeOfRhianne");
+  eyeState->setOnEnterCallback([&eye]() {eye.init(); });
+  _updateMap[eyeState] = [&eye]() { eye.update(); };
+  _drawMap  [eyeState] = [&eye]() { eye.draw  (); };
+  _menuMap  [eyeState] = [&eye]() { eye.menu  (); };
+  state.addState(eyeState);
+  
+  std::shared_ptr<Iyathuum::StateTransition> toLoadTransition = std::make_shared<Iyathuum::StateTransition>(startState, loaderState, []() {return true; });
+  state.addTransition(toLoadTransition);
+  std::shared_ptr<Iyathuum::StateTransition> toEyeTransition = std::make_shared<Iyathuum::StateTransition>(loaderState, eyeState, [&]() {return loader.finished(); });
+  state.addTransition(toEyeTransition);
+
+
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
   std::unique_ptr<Ahwassa::IMGUIRenderer> ui;
+  
+  std::unique_ptr<GamedataPicker> gamedataPicker;
 
-  std::shared_ptr<Ahwassa::ArcBallCamera> arcCam;
   w.Startup = [&]() {
-    arcCam = std::make_shared<Ahwassa::ArcBallCamera>(w.camera(), w.input());
-    w.camera()->setPosition(glm::vec3(20, 20, 20));
-    w.input().addUIElement(arcCam.get(), 1);
-
-    graphic    = std::make_unique<Graphic               >(&w,config.SupComPath + "\\sounds");
-    assets     = std::make_unique<AssetMainMenu        >(config, *graphic);
-    fps        = std::make_unique<Ahwassa::FPS          >(&w);
-    ui         = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
+    ui             = std::make_unique<Ahwassa::IMGUIRenderer>(&w);
+    gamedataPicker = std::make_unique<GamedataPicker>(config);
   };
 
   w.Update = [&]() {
-    assets->update();
-    graphic->update();
+    state.update();
 
-    graphic->draw();
+    _updateMap[state.currentState()]();
+    _drawMap  [state.currentState()]();
 
     ImGuiIO& io = ImGui::GetIO();
     io.FontGlobalScale = 2;
     ui->start();
-    assets->menu();
+    _menuMap[state.currentState()]();
     ui->end();
-
-    if (config.ShowFPS) 
-     fps->draw();    
   };
   w.Resize = [&](const glm::ivec2& newResolution) {
-    arcCam->setLocalPosition(Iyathuum::glmAABB<2>(glm::vec2(0, 0), glm::vec2(newResolution[0], newResolution[1])));
-    graphic->setResolution(newResolution);
+    eye.resize(newResolution);
   };
 
   w.run();

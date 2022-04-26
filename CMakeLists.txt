@@ -11,36 +11,52 @@ find_package(imgui REQUIRED)
 ############################################################################
 
 set(Header_Files
-    "Source/EyeOfRhianne/AssetMainMenu.h"
     "Source/EyeOfRhianne/EyeOfRhianneConfiguration.h"
-    "Source/EyeOfRhianne/Graphic.h"
-    "Source/EyeOfRhianne/GraphicOptionsMenuItem.h"
-    "Source/EyeOfRhianne/MapSelection.h"
-    "Source/EyeOfRhianne/ScriptSelection.h"
-    "Source/EyeOfRhianne/SkyBoxMenuItem.h"
-    "Source/EyeOfRhianne/SoundMenuItem.h"
-    "Source/EyeOfRhianne/UnitMenuItem.h"
+    "Source/EyeOfRhianne/EyeOfRhianne.h"
+    "Source/EyeOfRhianne/GamedataPicker.h"
+    "Source/EyeOfRhianne/GamedataLoader.h"
+    "Source/EyeOfRhianne/EyeState.h"
 )
 source_group("Header Files" FILES ${Header_Files})
 
 set(Source_Files
-    "Source/EyeOfRhianne/AssetMainMenu.cpp"
-    "Source/EyeOfRhianne/EyeOfRhianneConfiguration.cpp"
-    "Source/EyeOfRhianne/Graphic.cpp"
-    "Source/EyeOfRhianne/GraphicOptionsMenuItem.cpp"
-    "Source/EyeOfRhianne/ListSelection.cpp"
     "Source/EyeOfRhianne/main.cpp"
-    "Source/EyeOfRhianne/MapSelection.cpp"
-    "Source/EyeOfRhianne/ScriptSelection.cpp"
-    "Source/EyeOfRhianne/SkyBoxMenuItem.cpp"
-    "Source/EyeOfRhianne/SoundMenuItem.cpp"
-    "Source/EyeOfRhianne/UnitMenuItem.cpp"
+    "Source/EyeOfRhianne/EyeOfRhianne.cpp"
+    "Source/EyeOfRhianne/EyeOfRhianneConfiguration.cpp"
+    "Source/EyeOfRhianne/GamedataPicker.cpp"
+    "Source/EyeOfRhianne/GamedataLoader.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})
+
+set(Header_Files__AssetMainMenu
+    "Source/EyeOfRhianne/AssetMainMenu/AssetMainMenu.h"
+    "Source/EyeOfRhianne/AssetMainMenu/Graphic.h"
+    "Source/EyeOfRhianne/AssetMainMenu/GraphicOptionsMenuItem.h"
+    "Source/EyeOfRhianne/AssetMainMenu/MapSelection.h"
+    "Source/EyeOfRhianne/AssetMainMenu/ScriptSelection.h"
+    "Source/EyeOfRhianne/AssetMainMenu/SkyBoxMenuItem.h"
+    "Source/EyeOfRhianne/AssetMainMenu/SoundMenuItem.h"
+    "Source/EyeOfRhianne/AssetMainMenu/UnitMenuItem.h"
+)
+source_group("Header Files\\AssetMainMenu" FILES ${Header_Files__AssetMainMenu})
+
+set(Source_Files__AssetMainMenu
+    "Source/EyeOfRhianne/AssetMainMenu/AssetMainMenu.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/Graphic.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/GraphicOptionsMenuItem.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/MapSelection.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/ScriptSelection.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/SkyBoxMenuItem.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/SoundMenuItem.cpp"
+    "Source/EyeOfRhianne/AssetMainMenu/UnitMenuItem.cpp"
+)
+source_group("Source Files\\AssetMainMenu" FILES ${Source_Files__AssetMainMenu})
 
 set(ALL_FILES
     ${Header_Files}
     ${Source_Files}
+    ${Header_Files__AssetMainMenu}
+    ${Source_Files__AssetMainMenu}
 )
 
 ############################################################################
@@ -73,6 +89,7 @@ target_include_directories(EyeOfRhianne PRIVATE
 "${AezeselFileIOLib_SOURCE_DIR}/Source"
 "${VishalaNetworkLib_SOURCE_DIR}/Source"
 "${AthanahCommonLib_SOURCE_DIR}/Source"
+"${EyeOfRhianne_SOURCE_DIR}/Source"
 
 )
 
