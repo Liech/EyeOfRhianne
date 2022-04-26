@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
   Ahwassa::Window w(glm::ivec2(width,height));
   GamedataLoader loader(config);
   EyeOfRhianne   eye(config, w);
+  GamedataPicker picker(config);
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -58,6 +59,12 @@ int main(int argc, char** argv) {
   _updateMap[startState] = [&]() { };
   _drawMap  [startState] = [&]() { };
   _menuMap  [startState] = [&]() { };
+
+  std::shared_ptr<Iyathuum::State> pickerState = std::make_shared<Iyathuum::State>("GamedataPicker");
+  _updateMap[pickerState] = [&]() { };
+  _drawMap[pickerState] = [&]()   { };
+  _menuMap[pickerState] = [&]()   { picker.menu();   };
+  state.addState(pickerState);
 
   std::shared_ptr<Iyathuum::State> loaderState = std::make_shared<Iyathuum::State>("GameDataLoader");
   loaderState->setOnEnterCallback([&]() { loader.start(); });
@@ -74,7 +81,9 @@ int main(int argc, char** argv) {
   _menuMap  [eyeState] = [&eye]() { eye.menu  (); };
   state.addState(eyeState);
   
-  std::shared_ptr<Iyathuum::StateTransition> toLoadTransition = std::make_shared<Iyathuum::StateTransition>(startState, loaderState, []() {return true; });
+  std::shared_ptr<Iyathuum::StateTransition> toPickerTransition = std::make_shared<Iyathuum::StateTransition>(startState, pickerState, [&]() {return true; });
+  state.addTransition(toPickerTransition);
+  std::shared_ptr<Iyathuum::StateTransition> toLoadTransition = std::make_shared<Iyathuum::StateTransition>(pickerState, loaderState, [&]() {return picker.finished(); });
   state.addTransition(toLoadTransition);
   std::shared_ptr<Iyathuum::StateTransition> toEyeTransition = std::make_shared<Iyathuum::StateTransition>(loaderState, eyeState, [&]() {return loader.finished(); });
   state.addTransition(toEyeTransition);
@@ -106,10 +115,12 @@ int main(int argc, char** argv) {
     ui->end();
   };
   w.Resize = [&](const glm::ivec2& newResolution) {
-    eye.resize(newResolution);
+    if (eyeState == state.currentState())
+      eye.resize(newResolution);
   };
 
   w.run();
+  config.toJsonFile("Configuration.json");
 
   Iyathuum::DatabaseTerminator::terminateAll();
 }

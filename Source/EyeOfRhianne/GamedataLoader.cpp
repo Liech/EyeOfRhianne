@@ -42,6 +42,6 @@ void GamedataLoader::update() {
 
 void GamedataLoader::menu() {
   ImGui::Begin("Please Wait");
-  ImGui::Text("Loading SCD Game Data...");
+  ImGui::Text("Laden...");
   ImGui::End();
 }

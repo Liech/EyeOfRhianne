@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <regex>
 #include <imgui.h>
+#include <iostream>
 
 #include "AthanahCommonLib/SupCom/Gamedata/SkyboxFactory.h"
 #include "AhwassaGraphicsLib/Core/Window.h"
@@ -16,7 +17,7 @@
 SkyBoxMenuItem::SkyBoxMenuItem(Athanah::SkyboxFactory& factory, Graphic& graphic) : _graphic(graphic), _factory(factory){
 
   std::string skyFile = "DefaultEnvCube.dds";  
-
+  std::cout << "Preparing SkyBoxes..." << std::endl;
   _allSkyboxes = factory.getBoxes();
   if (_allSkyboxes.size() > 2) {
     setSkyBox(_allSkyboxes[2]);
