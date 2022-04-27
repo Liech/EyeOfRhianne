@@ -6,7 +6,7 @@ Supreme Commander Asset Explorer
 
 Eye Of Rhianne is an interactive asset explorer for supreme commander 1.
 
-[![Youtube Video](https://user-images.githubusercontent.com/16963076/119048618-c3cfce00-b9bf-11eb-8d46-f3d01e0454db.png)](https://youtu.be/8PbduxpR2ak "Youtube Video")
+[![Youtube Video](https://user-images.githubusercontent.com/16963076/165418474-37e42dbf-3fad-4631-b4bf-9115c4e8a628.PNG)](https://www.youtube.com/watch?v=Z_5WaVz7vpE "Youtube Video")
 
 # Capabilities
 
