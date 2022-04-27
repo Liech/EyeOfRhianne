@@ -23,24 +23,6 @@ MapSelection::MapSelection(std::string mapPath, Graphic& graphic, Athanah::Gamed
 
   std::vector<std::string> maps;
   std::vector<std::string> niceNamesMaps;
-
-//  _list = std::make_unique<ListSelection>(maps, niceNamesMaps, area, _graphic.getWindow(), [mapPath, this](std::string newMap) {
-//
-//  }, [this](Iyathuum::glmAABB<2> loc, std::string name, bool hovered) {
-//    _graphic.getWindow()->renderer().rectangle().start();
-//    _graphic.getWindow()->renderer().rectangle().drawRectangle(loc, hovered ? Iyathuum::Color(0.8f * 255, 0.8f * 255, 0.8f * 255) : Iyathuum::Color(0.4f * 255, 0.4f * 255, 0.4f * 255));
-//    _graphic.getWindow()->renderer().rectangle().end();
-//    _graphic.getWindow()->renderer().texture().start();
-//    Iyathuum::glmAABB<2> textureLoc = loc;
-//    auto map = _factory->loadMap(name);
-//    textureLoc.setSize(glm::vec2(textureLoc.getSize()[1], textureLoc.getSize()[1]));
-//    _graphic.getWindow()->renderer().texture().draw(*map->getPreview(), textureLoc);
-//    _graphic.getWindow()->renderer().texture().end();
-//    _graphic.getWindow()->renderer().text().start();
-//    _graphic.getWindow()->renderer().text().drawText(map->getScenario().name(), loc.getPosition() + glm::vec2(textureLoc.getSize()[0], 0),0.6f);
-//    _graphic.getWindow()->renderer().text().end();
-//  });
-
 }
 
 void MapSelection::update() {
@@ -50,6 +32,11 @@ void MapSelection::update() {
 void MapSelection::menu() {
   ImGuiIO& io = ImGui::GetIO();
   if (ImGui::TreeNode("Map")) {
+    if (ImGui::Button("No Map")) {
+      _graphic._mapMesh     = nullptr;
+      _graphic._currentMap  = nullptr;
+      _graphic._mapRenderer = nullptr;
+    }
     for (auto entry : _factory->getAvailableMaps()) {
       auto map = _factory->loadMap(entry);
       

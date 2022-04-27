@@ -8,6 +8,7 @@ class GamedataPicker {
     virtual ~GamedataPicker() = default;
 
     void menu();
+    void start();
     bool finished() const;
   private:
     EyeOfRhianneConfiguration& _config;

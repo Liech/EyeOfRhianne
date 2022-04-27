@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   int width  = config.ScreenWidth;
   int height = config.ScreenHeight;
 
-  Ahwassa::Window w(glm::ivec2(width,height));
+  Ahwassa::Window w("Eye Of Rhianne",glm::ivec2(width, height));
   GamedataLoader loader(config);
   EyeOfRhianne   eye(config, w);
   GamedataPicker picker(config);
@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
   _menuMap  [startState] = [&]() { };
 
   std::shared_ptr<Iyathuum::State> pickerState = std::make_shared<Iyathuum::State>("GamedataPicker");
+  pickerState->setOnEnterCallback([&]() { picker.start(); });
   _updateMap[pickerState] = [&]() { };
   _drawMap[pickerState] = [&]()   { };
   _menuMap[pickerState] = [&]()   { picker.menu();   };
